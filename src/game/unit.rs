@@ -1,4 +1,9 @@
+mod data_ally;
+mod data_enemy;
+mod show_unit;
+
 use crate::game::common::*;
+use super::skill::Skill;
 
 pub struct Unit {
   // 基础
@@ -6,18 +11,21 @@ pub struct Unit {
   pub name : String,
   pub team : Team,
 
+  // 技能
+  skills : Vec<Skill>,
+
   // 基础属性
-  hp_max : i32,
-  sp_max : i32,
-  tp_max : i32,
-  atk_melee : i32,
-  def_melee : i32,
-  agi : i32,
-  dex : i32,
-  luck : i32,
-  tie : i32,
-  struggle : i32,
-  rescue : i32,
+  pub hp_max : i32,
+  pub sp_max : i32,
+  pub tp_max : i32,
+  pub atk_melee : i32,
+  pub def_melee : i32,
+  pub agi : i32,
+  pub dex : i32,
+  pub luck : i32,
+  pub tie : i32,
+  pub struggle : i32,
+  pub rescue : i32,
 
   // 状态
   hp : i32,
@@ -50,6 +58,7 @@ impl Unit {
       id,
       name,
       team,
+      skills : Skill::basic(),
       hp_max,
       sp_max,
       tp_max,
@@ -70,7 +79,27 @@ impl Unit {
     }
   }
 
+  // 直接索引
+  pub fn dir(&self) -> Dir {
+    self.dir
+  }
+
+  pub fn bound(&self) -> i32 {
+    self.bound
+  }
+
   // 简单索引
+  pub fn colored_name(&self) -> String {
+    use colorful::Color;
+    use colorful::Colorful;
+    self.name.clone().color(
+      match self.team {
+        Team::Ally => Color::Blue,
+        Team::Enemy => Color::Red,
+      }
+    ).to_string()
+  }
+  
   pub fn is_bound(&self) -> bool {
     self.bound > 0
   }
@@ -94,5 +123,17 @@ impl Unit {
     } else {
       self.at -= t * self.spd();
     }
+  }
+
+  pub fn take_dmg(&mut self, dmg : i32) {
+    self.hp -= dmg;
+    if self.hp < 0 {
+      self.hp = 0;
+    }
+  }
+
+  pub fn is_weak(&self) -> bool {
+    if self.hp <= 0 {return true;}
+    self.hp as f64 / self.hp_max as f64 <= 0.15
   }
 }

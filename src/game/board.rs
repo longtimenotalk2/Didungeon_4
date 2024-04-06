@@ -1,4 +1,6 @@
 mod turn;
+mod data_area;
+mod show_board;
 
 use super::unit::Unit;
 use crate::game::common::*;
