@@ -3,6 +3,13 @@ use super::super::unit::Unit;
 use crate::game::common::*;
 
 impl Board {
+  pub fn new_1v1A() -> Self {
+    let mut b = Self::new();
+    b.add_unit(Unit::new_elis(2));
+    b.add_unit(Unit::new_fighter(5));
+    b
+  }
+  
   pub fn new_4v4A() -> Self {
     let mut b = Self::new();
     b.add_unit(Unit::new_noal(1));

@@ -1,19 +1,21 @@
 use crate::game::common::*;
-use crate::game::unit::Unit;
+use crate::game::board::Board;
 use rand::prelude::*;
 
 
-struct BattleExpect {
-  hit : i32,
-  dmg : i32,
+pub struct BattleExpect {
+  pub hit : i32,
+  pub dmg : i32,
 }
 
-impl Unit {
-  pub fn melee_expect(&self, tar : &Unit) -> BattleExpect {
-    let atk = self.atk_melee;
+impl Board {
+  pub fn melee_expect(&self, id1 : Id, id2 : Id) -> BattleExpect {
+    let unit = self.id2unit(id1);
+    let tar = self.id2unit(id2);
+    let atk = unit.atk_melee;
     let def = tar.def_melee;
     let dmg = dmg(atk, def);
-    let acc = self.dex;
+    let acc = unit.dex;
     let evd = tar.dex;
     let hit = hit(acc, evd);
     let expect = BattleExpect {
@@ -23,20 +25,25 @@ impl Unit {
     expect
   }
 
-  pub fn melee_exe(&self, tar : &mut Unit, rng : &mut ThreadRng , show : bool) {
-    let expect = self.melee_expect(tar);
+  pub fn melee_exe(&mut self, id1 : Id, id2 : Id, rng : &mut ThreadRng , show : bool) {
+    let expect = self.melee_expect(id1, id2);
     let hit = expect.hit;
     let dmg = expect.dmg;
     let is_hit = rng.gen_range(1..=100) <= hit;
     if is_hit {
-      tar.take_dmg(dmg);
+      self.id2unit_mut(id2).take_dmg(dmg);
     }
+    self.dash_to(id1, id2);
+    self.id2unit_mut(id1).at_delay(100.);
     if show {
+      let unit = self.id2unit(id1);
+      let tar = self.id2unit(id2);
       if is_hit {
-        println!("{} 攻击 {}， {} !", self.colored_name(), tar.colored_name(), dmg);
+        println!("{} 挥击 {}， {} !", unit.colored_name(), tar.colored_name(), dmg);
       } else {
-        println!("{} 攻击 {}， 落空", self.colored_name(), tar.colored_name());
+        println!("{} 挥击 {}， 落空", unit.colored_name(), tar.colored_name());
       }
+      println!("");
     }
   }
     
@@ -45,7 +52,7 @@ impl Unit {
 fn dmg(atk : i32, def : i32) -> i32 {
   let atk = atk as f64;
   let def = def as f64;
-  let dmg = atk * atk / (atk + def);
+  let dmg = 3.0 * atk * atk / (atk + def);
   dmg as i32
 }
 

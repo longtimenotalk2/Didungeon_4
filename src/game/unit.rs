@@ -84,6 +84,18 @@ impl Unit {
     self.dir
   }
 
+  pub fn skills(&self) -> &Vec<Skill> {
+    &self.skills
+  }
+  
+  pub fn set_dir(&mut self, dir : Dir) {
+    self.dir = dir;
+  }
+
+  pub fn at(&self) -> f64 {
+    self.at
+  }
+
   pub fn bound(&self) -> i32 {
     self.bound
   }
@@ -102,6 +114,10 @@ impl Unit {
   
   pub fn is_bound(&self) -> bool {
     self.bound > 0
+  }
+  
+  pub fn can_block(&self) -> bool {
+    !self.is_bound()
   }
 
   // 复杂逻辑
@@ -135,5 +151,23 @@ impl Unit {
   pub fn is_weak(&self) -> bool {
     if self.hp <= 0 {return true;}
     self.hp as f64 / self.hp_max as f64 <= 0.15
+  }
+
+  pub fn bound_add(&mut self, n : i32) {
+    self.bound += n;
+  } 
+
+  pub fn bound_sub(&mut self, n : i32) -> bool {
+    self.bound -= n;
+    if self.bound <= 0 {
+      self.bound = 0;
+      true
+    } else {
+      false
+    }
+  } 
+
+  pub fn at_delay(&mut self, n : f64) {
+    self.at += n;
   }
 }

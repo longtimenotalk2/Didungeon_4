@@ -15,6 +15,9 @@ fn main() {
     // noel.show();
 
     use game::board::Board;
-    let b = Board::new_4v4A();
-    b.show();
+    let mut b = Board::new_1v1A();
+    // let mut b = Board::new_4v4A();
+    
+    b.play();
+
 }
