@@ -4,6 +4,7 @@ use crate::game::common::*;
 use crate::game::skill::Skill;
 use colorful::Color;
 use colorful::Colorful;
+use rand::prelude::*;
 
 impl Board {
   pub fn choose_skill(&self, id : Id) -> Skill {
@@ -32,6 +33,9 @@ impl Board {
     loop {
       let mut ops = String::new();
       io::stdin().read_line(&mut ops).expect("failed to read line");
+      if ops == "\n" {
+        ops = "0".to_string();
+      }
       if let Ok(op) = ops.trim().parse::<usize>() {
         if valid_i.contains(&op) {
           println!("");
@@ -56,7 +60,9 @@ impl Board {
           if skill == &Skill::Melee {
             let be = self.melee_expect(*id, *idt);
             let hit = be.hit;
-            txt += &format!(" (命中率={}%)", hit.to_string());
+            let cri = be.cri;
+            let dmg = be.dmg;
+            txt += &format!(" (命中率={}%, 伤害={}~{}, 暴击率={}%)", hit.to_string(), dmg, 2*dmg, cri);
           }
         },
       }
@@ -67,6 +73,9 @@ impl Board {
     loop {
       let mut ops = String::new();
       io::stdin().read_line(&mut ops).expect("failed to read line");
+      if ops == "\n" {
+        ops = "0".to_string();
+      }
       if let Ok(op) = ops.trim().parse::<usize>() {
         if op < len {
           println!("");
@@ -81,6 +90,35 @@ impl Board {
         println!("输入错误,请输入一个自然数");
       }
     }
+  }
+
+  pub fn choose_skill_ai(&self, id : Id, rng : &mut ThreadRng) -> Skill {
+    let unit = self.id2unit(id);
+    let mut tiers = vec!(Vec::new(), Vec::new(),Vec::new());
+
+    
+    for skill in unit.skills() {
+      if unit.can_skill(skill) {
+        if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
+          let skill = skill.clone();
+          match skill {
+            Skill::Subdue => tiers[0].push(skill),
+            Skill::Wait => tiers[2].push(skill),
+            _ => tiers[1].push(skill),
+          }
+        }
+      }
+    }
+    for tier in tiers {
+      if tier.len() > 0 {
+        return tier.choose(rng).unwrap().clone();
+      }
+    }
+    unreachable!()
+  }
+
+  pub fn choose_target_ai(&self, targets : &[Target], rng : &mut ThreadRng) -> Target {
+    targets.choose(rng).unwrap().clone()
   }
 }
 

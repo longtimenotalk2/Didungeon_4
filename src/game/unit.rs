@@ -121,23 +121,49 @@ impl Unit {
   }
 
   // 复杂逻辑
-  fn spd(&self) -> f64 {
+  pub fn atk_melee(&self) -> f64 {
+    let mut atk = self.atk_melee as f64;
+    if self.is_weak() {
+      atk *= 0.8;
+    }
+    atk
+  }
+
+  pub fn def_melee(&self) -> f64 {
+    self.def_melee as f64
+  }
+  
+  pub fn agi(&self) -> f64 {
     let mut spd = self.agi as f64;
     if self.is_bound() {
-      spd /= 2.0;
+      spd /= 1.5;
     }
     spd
   }
 
+  pub fn dex(&self) -> f64 {
+    let mut dex = self.dex as f64;
+    if self.is_weak() {
+      dex *= 0.8;
+    }
+    dex
+  }
+
+  pub fn luck(&self) -> f64 {
+    self.luck as f64
+  }
+
+  
+
   pub fn calc_t(&self) -> f64 {
-    self.at / self.spd()
+    self.at / self.agi()
   }
 
   pub fn t_pass(&mut self, t : f64, to_zero : bool) {
     if to_zero {
       self.at = 0.0;
     } else {
-      self.at -= t * self.spd();
+      self.at -= t * self.agi();
     }
   }
 
@@ -150,7 +176,7 @@ impl Unit {
 
   pub fn is_weak(&self) -> bool {
     if self.hp <= 0 {return true;}
-    self.hp as f64 / self.hp_max as f64 <= 0.15
+    self.hp as f64 / self.hp_max as f64 <= 0.2
   }
 
   pub fn bound_add(&mut self, n : i32) {

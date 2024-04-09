@@ -2,6 +2,9 @@ pub mod game;
 
 use crate::game::skill::battle::*;
 use rand::prelude::*;
+use colorful::Color;
+use colorful::Colorful;
+
 
 fn main() {
     // println!("{}", hit(10, 130));
@@ -15,9 +18,15 @@ fn main() {
     // noel.show();
 
     use game::board::Board;
-    let mut b = Board::new_1v1A();
-    // let mut b = Board::new_4v4A();
+    // let mut b = Board::new_1v1A();
+    let mut b = Board::new_4v4A();
+    // let mut b = Board::new_test_a();
     
     b.play();
+
+    //给文字增添删除线
+
+    // let s = "ss".color(Color::Red).dim();
+    // print!("{s}");
 
 }

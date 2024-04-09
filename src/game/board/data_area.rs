@@ -22,4 +22,12 @@ impl Board {
     b.add_unit(Unit::new_thief(8));
     b
   }
+
+  pub fn new_test_a() -> Self {
+    let mut b = Self::new();
+    b.add_unit(Unit::new_alyssa(1));
+    b.add_unit(Unit::new_test_a(2));
+    b.add_unit(Unit::new_fighter(5));
+    b
+  }
 }

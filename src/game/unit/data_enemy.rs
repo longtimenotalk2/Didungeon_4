@@ -14,7 +14,7 @@ impl Unit {
       100, // def_melee
       100, // agi
       100, // dex
-      100, // luck
+      80, // luck
       2, // tie
       1, // struggle
       1, // rescue
@@ -33,7 +33,7 @@ impl Unit {
       90, // def_melee
       110, // agi
       115, // dex
-      105, // luck
+      90, // luck
       3, // tie
       1, // struggle
       2, // rescue

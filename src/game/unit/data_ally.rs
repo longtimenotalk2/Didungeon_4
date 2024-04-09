@@ -2,6 +2,28 @@ use super::super::unit::Unit;
 use crate::game::common::*;
 
 impl Unit {
+  pub fn new_test_a(id : Id) -> Self {
+    let mut u = Self::new(
+      id,
+      "人  偶".to_string(),
+      Team::Ally,
+      400, // hp_max
+      160, // sp_max
+      200, // tp_max
+      100, // atk_melee
+      100, // def_melee
+      100, // agi
+      100, // dex
+      100, // luck
+      3, // tie
+      1, // struggle
+      2, // rescue
+    );
+    u.bound_add(4);
+    u.take_dmg(399);
+    u
+  }
+  
   pub fn new_noal(id : Id) -> Self {
     Self::new(
       id,
@@ -51,7 +73,7 @@ impl Unit {
       92, // atk_melee
       95, // def_melee
       124, // agi
-      157, // dex
+      117, // dex
       134, // luck
       3, // tie
       1, // struggle
@@ -77,4 +99,6 @@ impl Unit {
       2, // rescue
     )
   }
+
+    
 }

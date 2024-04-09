@@ -12,6 +12,7 @@ pub struct Board {
     units: Vec<Unit>,
     t: f64,
     names: HashMap<String, usize>,
+    enemy_is_ai : bool,
 }
 
 impl Board {
@@ -20,6 +21,7 @@ impl Board {
             units: Vec::new(),
             t: 0.,
             names: HashMap::new(),
+            enemy_is_ai : true,
         }
     }
 
