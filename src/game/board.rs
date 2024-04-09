@@ -68,12 +68,15 @@ impl Board {
                 self.t_pass(t, id);
                 self.main_turn(id, &mut rng, true);
             } else {
+                self.show();
                 return ResultBoard::Panic;
             }
             if self.team_lose(Team::Ally) {
+                self.show();
                 return ResultBoard::Lose;
             }
             if self.team_lose(Team::Enemy) {
+                self.show();
                 return ResultBoard::Win;
             }
         }

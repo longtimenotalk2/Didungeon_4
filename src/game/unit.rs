@@ -104,20 +104,21 @@ impl Unit {
   pub fn colored_name(&self) -> String {
     use colorful::Color;
     use colorful::Colorful;
-    self.name.clone().color(
+    let mut cstr = self.name.clone().color(
       match self.team {
         Team::Ally => Color::Blue,
         Team::Enemy => Color::Red,
       }
-    ).to_string()
+    );
+    if self.is_bound() {
+      cstr = cstr.dim();
+    }
+      
+    cstr.to_string()
   }
   
   pub fn is_bound(&self) -> bool {
     self.bound > 0
-  }
-  
-  pub fn can_block(&self) -> bool {
-    !self.is_bound()
   }
 
   // 复杂逻辑
@@ -175,8 +176,15 @@ impl Unit {
   }
 
   pub fn is_weak(&self) -> bool {
-    if self.hp <= 0 {return true;}
     self.hp as f64 / self.hp_max as f64 <= 0.2
+  }
+
+  pub fn is_unhealth(&self) -> bool {
+    self.hp as f64 / self.hp_max as f64 <= 0.5
+  }
+
+  pub fn can_block(&self) -> bool {
+    !self.is_weak() && !self.is_bound()
   }
 
   pub fn bound_add(&mut self, n : i32) {
@@ -195,5 +203,15 @@ impl Unit {
 
   pub fn at_delay(&mut self, n : f64) {
     self.at += n;
+  }
+
+  pub fn turn_start(&mut self) {
+    if self.is_bound() {
+      if self.is_weak() {
+        self.hp += self.hp_max / 10;
+      } else if self.is_unhealth() {
+        self.hp += self.hp_max / 20;
+      }
+    }
   }
 }

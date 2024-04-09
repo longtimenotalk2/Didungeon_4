@@ -60,7 +60,7 @@ impl Board {
           println!("====> {} <==== ({} 挥击 {})", format!("{dmg}!").color(Color::Red).bold(), unit.colored_name(), tar.colored_name());
         }
       } else {
-        println!("====> {} <==== ({} 挥击 {})", "Miss".color(Color::LightGray).bold(), unit.colored_name(), tar.colored_name());
+        println!("====> {} <==== ({} 挥击 {})", "Miss".color(Color::BlueViolet).bold(), unit.colored_name(), tar.colored_name());
       }
       println!("");
     }

@@ -36,7 +36,7 @@ impl Board {
       if let Some(scan) = scan {
         let pos = i as i32;
         let tar = self.pos2unit(pos);
-        if tar.team != team && !tar.is_bound() && tar.is_weak() &&  scan.block == 0 {
+        if tar.team != team && !tar.is_bound() && tar.is_weak() && scan.block <= 0 {
           list.push(tar.id);
         }
       }
@@ -51,7 +51,7 @@ impl Board {
       if let Some(scan) = scan {
         let pos = i as i32;
         let tar = self.pos2unit(pos);
-        if tar.team == team && tar.is_bound() && scan.block <= 1 {
+        if tar.team == team && tar.is_bound() && scan.block <= 0 {
           list.push(tar.id);
         }
       }

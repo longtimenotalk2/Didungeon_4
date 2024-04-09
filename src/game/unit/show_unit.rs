@@ -14,11 +14,7 @@ impl Unit {
     s += &format!("[{:>3}]", self.at() as i32);
 
     // name
-    if self.is_bound() {
-      s += &self.colored_name().dim().to_string();
-    } else {
-      s += &self.colored_name();
-    }
+    s += &self.colored_name();
     s += match self.dir() {
       Dir::Left => " ↑",
       Dir::Right => " ↓",

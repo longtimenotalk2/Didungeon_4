@@ -12,7 +12,9 @@ struct SkillComplete {
 
 impl Board {
   pub fn main_turn(&mut self, id : Id, rng : &mut ThreadRng , show : bool) {
+    self.id2unit_mut(id).turn_start();
     self.show();
+    self.show_at_order();
     println!("");
     if show {
       println!("<{} 的回合>", self.id2unit(id).colored_name())
@@ -85,6 +87,26 @@ impl Board {
         target : Some(target),
       }
     }
+  }
+
+  fn show_at_order(&self) {
+    let mut txt = String::new();
+    for id in self.at_order() {
+      txt += &self.id2unit(id).colored_name();
+      txt += "|";
+    }
+    txt = txt[..txt.len()-1].to_string();
+    println!("{}", txt);
+  }
+
+  fn at_order(&self) -> Vec<Id> {
+    let mut ats = Vec::new();
+    for unit in self.units.iter() {
+      let t0 = unit.calc_t();
+      ats.push((t0, unit.id));
+    }
+    ats.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+    ats.into_iter().map(|(_, id)| id).collect()
   }
 }
 
