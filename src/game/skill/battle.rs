@@ -9,25 +9,39 @@ pub struct BattleExpect {
   pub hit : i32,
   pub dmg : i32,
   pub cri : i32,
+  pub is_back : bool,
 }
 
 impl Board {
   pub fn melee_expect(&self, id1 : Id, id2 : Id) -> BattleExpect {
     let unit = self.id2unit(id1);
     let tar = self.id2unit(id2);
+    let dir = self.dir_to(id1, id2);
+    let is_back = dir == tar.dir();
     let atk = unit.atk_melee();
-    let def = tar.def_melee();
+    let mut def = tar.def_melee();
+    if is_back {
+      def *= 0.5;
+    }
     let dmg = dmg(atk, def);
     let acc = unit.dex();
-    let evd = tar.agi() * 0.5 + tar.dex() * 0.25 + tar.luck() * 0.25;
+    let mut evd = tar.agi() * 0.5 + tar.dex() * 0.25 + tar.luck() * 0.25;
+    if is_back {
+      evd *= 0.5;
+    }
     let hit = hit(acc, evd);
     let crieff = unit.dex() * 0.5 + unit.luck() * 0.5;
     let res = tar.luck();
-    let cri = effect_hit(crieff, res, 0);
+    let mut base_cri = 0;
+    if is_back {
+      base_cri += 40;
+    }
+    let cri = effect_hit(crieff, res, base_cri);
     let expect = BattleExpect {
       hit,
       dmg,
       cri,
+      is_back,
     };
     expect
   }
@@ -49,18 +63,25 @@ impl Board {
       self.id2unit_mut(id2).take_dmg(dmg);
     }
     self.dash_to(id1, id2);
+    if is_hit {
+      let dir = self.dir_to(id1, id2);
+      self.id2unit_mut(id2).set_dir(dir.anti())
+    }
     self.id2unit_mut(id1).at_delay(100.);
     if show {
       let unit = self.id2unit(id1);
       let tar = self.id2unit(id2);
+      let back = if expect.is_back {
+        "背刺! ".color(Color::Red).bold().to_string()
+      } else {"".to_string()};
       if is_hit {
         if is_cri {
-          println!("====> {} <==== ({} 挥击 {})", format!("暴击! {dmg}!").color(Color::Orange1).bold(), unit.colored_name(), tar.colored_name());
+          println!("====> {}{} <==== (挥击 {})", back, format!("暴击! {dmg}!").color(Color::Orange1).bold(), tar.colored_name());
         } else {
-          println!("====> {} <==== ({} 挥击 {})", format!("{dmg}!").color(Color::Red).bold(), unit.colored_name(), tar.colored_name());
+          println!("====> {}{} <==== (挥击 {})", back, format!("{dmg}!").color(Color::Red).bold(), tar.colored_name());
         }
       } else {
-        println!("====> {} <==== ({} 挥击 {})", "Miss".color(Color::BlueViolet).bold(), unit.colored_name(), tar.colored_name());
+        println!("====> {}{} <==== (挥击 {})", back,  "Miss".color(Color::BlueViolet).bold(),  tar.colored_name());
       }
       println!("");
     }

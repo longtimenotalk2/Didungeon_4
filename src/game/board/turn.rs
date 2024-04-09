@@ -39,10 +39,12 @@ impl Board {
       Skill::Rescue => {
         self.rescue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
       },
+      Skill::Dash => {
+        self.dash_exe(id, &sc.target.unwrap());
+      }
       Skill::Wait => {
         self.wait_exe(id, show);
       }
-      _ => {},
     }
   }
 

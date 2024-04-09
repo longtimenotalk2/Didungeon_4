@@ -16,6 +16,16 @@ pub enum Dir {
   None,
 }
 
+impl Dir {
+  pub fn anti(self) -> Dir {
+    match self {
+      Dir::Left => Dir::Right,
+      Dir::Right => Dir::Left,
+      Dir::None => Dir::None,
+    }
+  }
+}
+
 pub enum ResultBoard {
   Win,
   Lose,
@@ -26,6 +36,7 @@ pub enum ResultBoard {
 #[derive(Debug, Clone)]
 pub enum Target {
   Single(Id),
+  Border(Dir),
 }
 
 impl Target {

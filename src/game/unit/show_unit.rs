@@ -16,8 +16,8 @@ impl Unit {
     // name
     s += &self.colored_name();
     s += match self.dir() {
-      Dir::Left => " ↑",
-      Dir::Right => " ↓",
+      Dir::Left => "↑",
+      Dir::Right => "↓",
       Dir::None => " ",
     };
     s += " ";
@@ -30,7 +30,7 @@ impl Unit {
     }
 
     //hp
-    s += &hp_bar(self.hp, self.hp_max);
+    s += &self.hp_bar();
     s += &if self.is_weak() {
       format!("{}/{:>3}", format!("{:>3}", self.hp).color(Color::Red), self.hp_max)
     } else {
@@ -47,51 +47,16 @@ impl Unit {
         format!("{:>3}", a.to_string())
       }
     }
-    s += "  ";
-    s += &format!("攻{} ", cc(self.atk_melee() as i32, self.atk_melee));
-    s += &format!("防{} ", cc(self.def_melee() as i32, self.def_melee));
-    s += &format!("速{} ", cc(self.agi() as i32, self.agi));
-    s += &format!("技{} ", cc(self.dex() as i32, self.dex));
-    s += &format!("运{} ", cc(self.luck() as i32, self.luck));
+    // s += "  ";
+    // s += &format!("攻{} ", cc(self.atk_melee() as i32, self.atk_melee));
+    // s += &format!("防{} ", cc(self.def_melee() as i32, self.def_melee));
+    // s += &format!("速{} ", cc(self.agi() as i32, self.agi));
+    // s += &format!("技{} ", cc(self.dex() as i32, self.dex));
+    // s += &format!("运{} ", cc(self.luck() as i32, self.luck));
     
     s
   }
 }
 
 
-
-fn hp_bar(hp : i32, hp_max : i32) -> String {
-  fn block(i : i32) -> &'static str {
-    match i {
-      ..=0 => " ",
-      1 => "▏",
-      2 => "▎",
-      3 => "▍",
-      4 => "▌",
-      5 => "▋",
-      6 => "▊",
-      7 => "▉",
-      8.. => "█",
-      _ => unreachable!(),
-    }
-  }
-
-  let rate = hp as f64 / hp_max as f64;
-  let n = 4;
-  let color = if rate <= 0.2 {
-    Color::Red
-  } else if rate <= 0.5 {
-    Color::Yellow
-  } else {
-    Color::Green
-  };
-  let mut txt = String::new();
-  txt += "▕";
-  let q = (n * 8) as f64;
-  for i in 0..n {
-    txt += &block((rate * q - i as f64 * 8.) as i32).color(color).to_string()
-  }
-  txt += "▏";
-  txt
-}
 

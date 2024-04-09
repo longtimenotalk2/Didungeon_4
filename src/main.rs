@@ -18,8 +18,8 @@ fn main() {
     // noel.show();
 
     use game::board::Board;
-    let mut b = Board::new_1v1A();
-    // let mut b = Board::new_4v4A();
+    // let mut b = Board::new_1v1A();
+    let mut b = Board::new_4v4A();
     // let mut b = Board::new_test_a();
     
     b.play();

@@ -11,7 +11,24 @@ impl Board {
       println!("")
     }
   }
-  
+
+  pub fn dash_exe(&mut self, id1 : Id, t : &Target) {
+    let unit = self.id2unit_mut(id1);
+    unit.at_delay(100.);
+    match t {
+      Target::Single(id2) => {
+        self.dash_to(id1, *id2);
+      },
+      Target::Border(dir) => {
+        let pos1 = self.id2pos(id1);
+        match dir {
+          Dir::Left => self.remove_insert(pos1, 0),
+          Dir::Right => self.remove_insert(pos1, self.len() as Pos),
+          _ => unreachable!(),
+        }
+      },
+    }
+  }
   
   pub fn dash_to(&mut self, id1 : Id, id2 : Id) {
     let pos1 = self.id2pos(id1);

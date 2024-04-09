@@ -56,15 +56,25 @@ impl Board {
       match target {
         Target::Single(idt) => {
           let tar = self.id2unit(*idt);
-          txt += &format!("{i} : {}", tar.colored_name());
+          txt += &format!("{i} : {}{}", tar.colored_name(), tar.hp_bar());
           if skill == &Skill::Melee {
             let be = self.melee_expect(*id, *idt);
+            if be.is_back {
+              txt += &"被刺".color(Color::Red).bold().to_string();
+            }
             let hit = be.hit;
             let cri = be.cri;
             let dmg = be.dmg;
-            txt += &format!(" (命中率={}%, 伤害={}~{}, 暴击率={}%)", hit.to_string(), dmg, 2*dmg, cri);
+            txt += &format!("命{}%,伤{}~{},暴{}%", hit.to_string(), dmg, 2*dmg, cri);
           }
         },
+        Target::Border(dir) => {
+          match dir {
+            Dir::Left => txt += &format!("{i} : {}", "上边界".color(Color::BlueViolet)),
+            Dir::Right => txt += &format!("{i} : {}", "下边界".color(Color::BlueViolet)),
+            _ => unreachable!(),
+          }
+        }
       }
       txt += "\n";
     }

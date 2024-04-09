@@ -4,6 +4,8 @@ mod show_unit;
 
 use crate::game::common::*;
 use super::skill::Skill;
+use colorful::Color;
+use colorful::Colorful;
 
 pub struct Unit {
   // 基础
@@ -116,6 +118,10 @@ impl Unit {
       
     cstr.to_string()
   }
+
+  pub fn hp_bar(&self) -> String {
+    hp_bar(self.hp, self.hp_max)
+  }
   
   pub fn is_bound(&self) -> bool {
     self.bound > 0
@@ -184,7 +190,7 @@ impl Unit {
   }
 
   pub fn can_block(&self) -> bool {
-    !self.is_weak() && !self.is_bound()
+    !self.is_bound()
   }
 
   pub fn bound_add(&mut self, n : i32) {
@@ -206,12 +212,58 @@ impl Unit {
   }
 
   pub fn turn_start(&mut self) {
+    self.dir = Dir::None;
     if self.is_bound() {
       if self.is_weak() {
-        self.hp += self.hp_max / 10;
-      } else if self.is_unhealth() {
         self.hp += self.hp_max / 20;
-      }
+      } 
     }
   }
+
+  pub fn zoc(&self) -> Vec<Dir> {
+    if !self.is_bound() {
+      match self.dir {
+        Dir::None => vec!(Dir::Left, Dir::Right),
+        Dir::Left => vec!(Dir::Left),
+        Dir::Right => vec!(Dir::Right),
+      }
+    } else {
+      vec!()
+    }
+  }
+}
+
+fn hp_bar(hp : i32, hp_max : i32) -> String {
+  fn block(i : i32) -> &'static str {
+    match i {
+      ..=0 => " ",
+      1 => "▏",
+      2 => "▎",
+      3 => "▍",
+      4 => "▌",
+      5 => "▋",
+      6 => "▊",
+      7 => "▉",
+      8.. => "█",
+      _ => unreachable!(),
+    }
+  }
+
+  let rate = hp as f64 / hp_max as f64;
+  let n = 4;
+  let color = if rate <= 0.2 {
+    Color::Red
+  } else if rate <= 0.5 {
+    Color::Yellow
+  } else {
+    Color::Green
+  };
+  let mut txt = String::new();
+  txt += "▕";
+  let q = (n * 8) as f64;
+  for i in 0..n {
+    txt += &block((rate * q - i as f64 * 8.) as i32).color(color).to_string()
+  }
+  txt += "▏";
+  txt
 }
