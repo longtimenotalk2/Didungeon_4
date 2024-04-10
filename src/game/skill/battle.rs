@@ -34,6 +34,11 @@ impl Skill {
           acc_rate_fix : 0.8,
           base_cri : 35,
         }),
+      Skill::Whack => Some(MeleeCard {
+          atk_rate_fix : 1.3,
+          acc_rate_fix : 0.9,
+          base_cri : 10,
+        }),
       _ => None,
     }
   }

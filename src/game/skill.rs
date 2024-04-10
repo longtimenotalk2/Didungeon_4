@@ -10,15 +10,13 @@ use colorful::Colorful;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Catagory {
-  // basic
   Melee,
   Shoot,
   Special,
   Rope,
   Dash,
   Wait,
-  // special
-  
+  Other,
 }
 
 impl Catagory {
@@ -50,6 +48,9 @@ pub enum Skill {
 
   // Alyssa
   RoundhouseKick,
+
+  // Common
+  Whack,
 }
 
 impl Skill {
@@ -69,6 +70,7 @@ impl Skill {
       Self::Xuliyiji => "蓄力一击".to_string(),
       Self::Cangyanzhihun => "苍炎之魂".to_string(),
       Self::RoundhouseKick => "回旋踢".to_string(),
+      Self::Whack => "重击".to_string(),
     }
   }
 
@@ -85,7 +87,7 @@ impl Skill {
       Self::Melee => Catagory::Melee,
       Self::Shoot => Catagory::Shoot,
       Self::Subdue => Catagory::Rope,
-      Self::Struggle => Catagory::Rope,
+      Self::Struggle => Catagory::Other,
       Self::Rescue => Catagory::Rope,
       Self::Dash => Catagory::Dash,
       Self::Wait => Catagory::Wait,
@@ -99,6 +101,7 @@ impl Skill {
       Skill::Xuliyiji => (10, 0),
       Skill::Cangyanzhihun => (0, 25),
       Skill::RoundhouseKick => (0, 30),
+      Skill::Whack => (10, 20),
       _ => (0, 0)
     }
   }

@@ -21,7 +21,7 @@ impl Unit {
       2, // tie
       1, // struggle
       1, // rescue
-      vec!(), // addition skills
+      vec!(Skill::Whack), // addition skills
     )
   }
 

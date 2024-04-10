@@ -55,6 +55,15 @@ impl Board {
   }
 
   fn get_skill_complete(&self, id : Id) -> SkillComplete {
+    let unit = self.id2unit(id);
+    if unit.is_bound() {
+      let skill = self.choose_skill_with_bound(id);
+      return SkillComplete {
+        id,
+        skill,
+        target : None,
+      }
+    }
     loop {
       let catagory = self.choose_catagory(id);
       loop {
@@ -82,6 +91,7 @@ impl Board {
                 Catagory::Rope => continue,
                 Catagory::Dash => break,
                 Catagory::Wait => break,
+                _ => unreachable!(),
               }
             }
           }
