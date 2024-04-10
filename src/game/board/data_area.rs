@@ -1,6 +1,5 @@
 use super::super::board::Board;
 use super::super::unit::Unit;
-use crate::game::common::*;
 
 impl Board {
   pub fn new_1v1A() -> Self {
@@ -18,8 +17,8 @@ impl Board {
     b.add_unit(Unit::new_yelin(4));
     b.add_unit(Unit::new_fighter(5));
     b.add_unit(Unit::new_fighter(6));
-    b.add_unit(Unit::new_thief(7));
-    b.add_unit(Unit::new_thief(8));
+    b.add_unit(Unit::new_arc(7));
+    b.add_unit(Unit::new_arc(8));
     b
   }
 

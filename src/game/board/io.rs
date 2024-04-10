@@ -268,8 +268,8 @@ impl Board {
             let dmg = be.dmg;
             txt += &format!("命{}%,伤{}~{},暴{}%", hit.to_string(), dmg, 2*dmg, cri);
           }
-          if skill == &Skill::Shoot {
-            let be = self.shoot_expect(*id, *idt);
+          if skill.belong_to_shoot() {
+            let be = self.shoot_expect(*id, *idt, skill);
             if be.is_back {
               txt += &"背刺".color(Color::Red).bold().to_string();
             }

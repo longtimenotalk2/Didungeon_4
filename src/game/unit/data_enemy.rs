@@ -25,10 +25,10 @@ impl Unit {
     )
   }
 
-  pub fn new_thief(id : Id) -> Self {
+  pub fn new_arc(id : Id) -> Self {
     Self::new(
       id,
-      "女盗贼".to_string(),
+      "女弓手".to_string(),
       Team::Enemy,
       400, // hp_max
       160, // sp_max
@@ -43,7 +43,7 @@ impl Unit {
       3, // tie
       1, // struggle
       2, // rescue
-      vec!(Skill::Shoot), // addition skills
+      vec!(Skill::Shoot, Skill::PrecisionSniping), // addition skills
     )
   }
 }

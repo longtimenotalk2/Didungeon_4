@@ -51,6 +51,7 @@ pub enum Skill {
 
   // Common
   Whack,
+  PrecisionSniping,
 }
 
 impl Skill {
@@ -71,6 +72,7 @@ impl Skill {
       Self::Cangyanzhihun => "苍炎之魂".to_string(),
       Self::RoundhouseKick => "回旋踢".to_string(),
       Self::Whack => "重击".to_string(),
+      Self::PrecisionSniping => "精准射击".to_string(),
     }
   }
 
@@ -102,6 +104,7 @@ impl Skill {
       Skill::Cangyanzhihun => (0, 25),
       Skill::RoundhouseKick => (0, 30),
       Skill::Whack => (10, 20),
+      Skill::PrecisionSniping => (10, 20),
       _ => (0, 0)
     }
   }
@@ -126,6 +129,9 @@ impl Unit {
           txt += &"<不足>".color(Color::Red).to_string();
           ok = false;
         }
+      }
+      if sp > 0 && tp > 0 {
+        txt += ", ";
       }
       if tp > 0 {
         txt += &format!("tp: {tp}").color(Color::Green).to_string();

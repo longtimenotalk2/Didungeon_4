@@ -29,11 +29,10 @@ impl Board {
     sc.skill.cost_exe(self.id2unit_mut(id));
     if sc.skill.belong_to_melee() {
       self.melee_exe(id, sc.target.unwrap().to_id().unwrap(), &sc.skill, rng, show);
+    } else if sc.skill.belong_to_shoot(){
+      self.shoot_exe(id, sc.target.unwrap().to_id().unwrap(), &sc.skill, rng, show);
     } else {
       match sc.skill {
-        Skill::Shoot => {
-          self.shoot_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
-        }
         Skill::Subdue => {
           self.subdue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
         },

@@ -11,6 +11,12 @@ struct MeleeCard {
   base_cri : i32,
 }
 
+struct ShootCard {
+  atk_rate_fix : f64,
+  acc_rate_fix : f64,
+  base_cri : i32,
+}
+
 impl Skill {
   fn melee_card(&self) -> Option<MeleeCard> {
     match self {
@@ -43,9 +49,30 @@ impl Skill {
     }
   }
 
+  fn shoot_card(&self) -> Option<ShootCard> {
+    match self {
+      Skill::Shoot => Some(ShootCard {
+        atk_rate_fix : 1.,
+        acc_rate_fix : 1.,
+        base_cri : 0,
+      }),
+      Skill::PrecisionSniping => Some(ShootCard {
+        atk_rate_fix : 1.2,
+        acc_rate_fix : 1.2,
+        base_cri : 10,
+      }),
+      _ => None,
+    }
+  }
+
   pub fn belong_to_melee(&self) -> bool {
     self.melee_card().is_some()
   }
+
+  pub fn belong_to_shoot(&self) -> bool {
+    self.shoot_card().is_some()
+  }
+  
 }
 
 pub struct BattleExpect {
@@ -138,7 +165,8 @@ impl Board {
     }
   }
 
-  pub fn shoot_expect(&self, id1 : Id, id2 : Id) -> BattleExpect {
+  pub fn shoot_expect(&self, id1 : Id, id2 : Id, skill : &Skill) -> BattleExpect {
+    let card = skill.shoot_card().expect(&format!("技能 {} 无法被识别为Shoot", skill.to_string()));
     let unit = self.id2unit(id1);
     let tar = self.id2unit(id2);
     let dir = self.dir_to(id1, id2);
@@ -171,8 +199,8 @@ impl Board {
     expect
   }
 
-  pub fn shoot_exe(&mut self, id1 : Id, id2 : Id, rng : &mut ThreadRng , show : bool) {
-    let expect = self.shoot_expect(id1, id2);
+  pub fn shoot_exe(&mut self, id1 : Id, id2 : Id, skill : &Skill, rng : &mut ThreadRng , show : bool) {
+    let expect = self.shoot_expect(id1, id2, skill);
     let hit = expect.hit;
     let mut dmg = expect.dmg;
     let is_hit = rng.gen_range(1..=100) <= hit;

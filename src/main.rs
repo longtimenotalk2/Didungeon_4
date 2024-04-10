@@ -19,8 +19,8 @@ fn main() {
 
     use game::board::Board;
     // let mut b = Board::new_1v1A();
-    // let mut b = Board::new_4v4A();
-    let mut b = Board::new_test_a();
+    let mut b = Board::new_4v4A();
+    // let mut b = Board::new_test_a();
     // let mut b = Board::new_test_b();
     
     b.play();

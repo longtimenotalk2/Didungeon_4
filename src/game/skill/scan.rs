@@ -31,18 +31,17 @@ impl Skill {
         ),
       };
       return board.find_reach_option(id, &detail)
+    } else if self.belong_to_shoot() {
+      let detail = RangeDetail {
+        pierce : 2,
+        ttt : TargetTeamType::Enemy,
+        demand : Box::new(|tar : &Unit| 
+          !tar.is_bound()
+        ),
+      };
+      return board.find_range_option(id, &detail)
     }
     match self {
-      Skill::Shoot => {
-        let detail = RangeDetail {
-          pierce : 2,
-          ttt : TargetTeamType::Enemy,
-          demand : Box::new(|tar : &Unit| 
-            !tar.is_bound()
-          ),
-        };
-        board.find_range_option(id, &detail)
-      }
       Skill::Subdue => {
         let detail = ReachDetail {
           bypass : 0,
@@ -168,7 +167,7 @@ impl Board {
     while self.valid_pos(pos - dist) {
       let p = pos - dist;
       let tar = self.pos2unit(p);
-      if dist == 1 && tar.zoc().contains(&Dir::Right) {
+      if dist == 1 && tar.team != team && tar.zoc().contains(&Dir::Right) {
         zoc = true;
       }
       let block_old = block;
