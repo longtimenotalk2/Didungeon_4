@@ -26,6 +26,7 @@ impl Board {
     } else {
       self.get_skill_complete(id)
     };
+    sc.skill.cost_exe(self.id2unit_mut(id));
     match sc.skill {
       Skill::Melee => {
         self.melee_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);

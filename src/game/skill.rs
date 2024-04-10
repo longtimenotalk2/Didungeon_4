@@ -5,15 +5,20 @@ mod rope;
 
 use crate::game::common::*;
 use super::unit::Unit;
+use colorful::Color;
+use colorful::Colorful;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Catagory {
+  // basic
   Melee,
   Shoot,
   Special,
   Rope,
   Dash,
   Wait,
+  // special
+  
 }
 
 impl Catagory {
@@ -77,30 +82,64 @@ impl Skill {
       _ => Catagory::Special,
     }
   }
+
+  pub fn cost(&self) -> (i32, i32) {
+    match self {
+      Skill::Shoot => (5, 0),
+      _ => (0, 0)
+    }
+  }
+
+  pub fn cost_exe(&self, unit : &mut Unit) {
+    let (sp, tp) = self.cost();
+    unit.sp_sub(sp);
+    unit.tp_sub(tp);
+  }
 }
 
 impl Unit {
-  pub fn can_skill_or_reason(&self, skill : &Skill) -> Result<(), String> {
+  pub fn can_skill_or_reason(&self, skill : &Skill) -> Result<String, String> {
+    let emp = String::new();
+    let cost_judge = |cost : (i32, i32)| -> Result<String, String> {
+      let (sp, tp) = cost;
+      let mut ok = true;
+      let mut txt = String::new();
+      if sp > 0 {
+        txt += &format!("sp: {sp}").color(Color::Blue).to_string();
+        if sp > self.sp() {
+          txt += &"<不足>".color(Color::Red).to_string();
+          ok = false;
+        }
+      }
+      if tp > 0 {
+        txt += &format!("tp: {tp}").color(Color::Green).to_string();
+        if tp > self.tp() {
+          txt += &"<不足>".color(Color::Red).to_string();
+          ok = false;
+        }
+      }
+      if ok {Ok(txt)} else {Err(txt)}
+    };
     match skill {
       Skill::Melee => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Melee.to_string()))} else {Ok(())}
+        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Melee.to_string()))} else {cost_judge(skill.cost())}
       },
       Skill::Shoot => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Shoot.to_string()))} else {Ok(())}
+        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Shoot.to_string()))} else {cost_judge(skill.cost())}
       },
       Skill::Subdue => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Subdue.to_string()))} else {Ok(())}
+        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Subdue.to_string()))} else {cost_judge( skill.cost())}
       },
       Skill::Struggle => {
-        if self.is_bound() {Ok(())} else {Err(format!("未被束缚，无法发动{}", Skill::Struggle.to_string()))}
+        if self.is_bound() {cost_judge(skill.cost())} else {Err(format!("未被束缚，无法发动{}", Skill::Struggle.to_string()))}
       },
       Skill::Rescue => {
-          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {Ok(())}
+          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {cost_judge(skill.cost())}
       },
       Skill::Dash => {
-          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {Ok(())}
+          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {cost_judge(skill.cost())}
       },
-      Skill::Wait => Ok(()),
+      Skill::Wait => Ok(emp),
     }
   }
 

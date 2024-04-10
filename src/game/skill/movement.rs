@@ -6,6 +6,7 @@ impl Board {
   pub fn wait_exe(&mut self, id : Id, show : bool) {
     let unit = self.id2unit_mut(id);
     unit.at_delay(50.);
+    unit.tp_add(5);
     if show {
       println!("{} 等待", unit.colored_name());
       println!("")

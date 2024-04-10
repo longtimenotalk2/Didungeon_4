@@ -61,6 +61,9 @@ impl Board {
         dmg = (dmg as f64 * (1.0 + y)) as i32;
       }
       self.id2unit_mut(id2).take_dmg(dmg);
+      self.id2unit_mut(id2).tp_add(10);
+      self.id2unit_mut(id1).tp_add(10);
+      
     }
     self.dash_to(id1, id2);
     if is_hit {
@@ -134,6 +137,8 @@ impl Board {
         dmg = (dmg as f64 * (1.0 + y)) as i32;
       }
       self.id2unit_mut(id2).take_dmg(dmg);
+      self.id2unit_mut(id2).tp_add(10);
+      self.id2unit_mut(id1).tp_add(10);
     }
     let dir = self.dir_to(id1, id2);
     self.id2unit_mut(id1).set_dir(dir);

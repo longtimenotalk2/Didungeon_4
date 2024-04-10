@@ -34,8 +34,14 @@ impl Unit {
     s += &if self.is_weak() {
       format!("{}/{:>3}", format!("{:>3}", self.hp).color(Color::Red), self.hp_max)
     } else {
-      format!("{:>3}/{:>3}", self.hp.to_string(), self.hp_max)
+      format!("{:>3}/{:>3}", self.hp, self.hp_max)
     };
+
+    // sp, at
+    s += ", ";
+    s += &format!("{:>3}/{:>3}", self.sp, self.sp_max).color(Color::Blue).to_string();
+    s += ", ";
+    s += &format!("{:>3}/{:>3}", self.tp, self.tp_max).color(Color::Green).to_string();
 
     // 属性
     fn cc(a : i32, b : i32) -> String {

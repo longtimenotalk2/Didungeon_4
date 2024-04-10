@@ -34,12 +34,14 @@ impl Board {
         Catagory::Shoot => {
           if skills.contains(&Skill::Shoot) {
             match unit.can_skill_or_reason(&Skill::Shoot) {
-              Ok(_) => {
+              Ok(msg) => {
                 if Skill::Shoot.find_target(self, id).len() > 0 {
                   valid_i.push(i);
                   txt += &format!("{i} : {}", Skill::Shoot.to_string());
+                  txt += &format!(" ({})", msg);
                 } else {
                   txt += &format!("{i} : {}", Skill::Shoot.to_string()).color(Color::DarkGray).to_string();
+                  txt += &format!(" ({})", msg);
                   txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
                 }
               },

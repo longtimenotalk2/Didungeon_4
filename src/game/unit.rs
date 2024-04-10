@@ -134,6 +134,32 @@ impl Unit {
     self.bound > 0
   }
 
+  pub fn sp(&self) -> i32 {
+    self.sp
+  }
+
+  pub fn sp_add(&mut self, mount : i32) {
+    self.sp += mount;
+  }
+
+  pub fn sp_sub(&mut self, mount : i32) {
+    self.sp -= mount;
+    if self.sp < 0 {self.sp = 0;}
+  }
+
+  pub fn tp(&self) -> i32 {
+    self.tp
+  }
+
+  pub fn tp_add(&mut self, mount : i32) {
+    self.tp += mount;
+  }
+
+  pub fn tp_sub(&mut self, mount : i32) {
+    self.tp -= mount;
+    if self.tp < 0 {self.tp = 0;}
+  }
+
   // 复杂逻辑
   pub fn atk_melee(&self) -> f64 {
     let mut atk = self.atk_melee as f64;
