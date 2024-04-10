@@ -6,6 +6,28 @@ mod rope;
 use crate::game::common::*;
 use super::unit::Unit;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Catagory {
+  Melee,
+  Shoot,
+  Special,
+  Rope,
+  Dash,
+  Wait,
+}
+
+impl Catagory {
+  pub fn all() -> Vec<Self> {
+    vec![
+      Self::Melee,
+      Self::Shoot,
+      Self::Special,
+      Self::Rope,
+      Self::Dash,
+      Self::Wait,
+    ]
+  }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Skill {
@@ -40,6 +62,19 @@ impl Skill {
       Self::Struggle => true,
       Self::Wait => true,
       _ => false,
+    }
+  }
+
+  pub fn catagory(&self) -> Catagory {
+    match self {
+      Self::Melee => Catagory::Melee,
+      Self::Shoot => Catagory::Shoot,
+      Self::Subdue => Catagory::Rope,
+      Self::Struggle => Catagory::Rope,
+      Self::Rescue => Catagory::Rope,
+      Self::Dash => Catagory::Dash,
+      Self::Wait => Catagory::Wait,
+      _ => Catagory::Special,
     }
   }
 }

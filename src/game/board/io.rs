@@ -1,12 +1,165 @@
 use std::io;
 use super::super::board::Board;
 use crate::game::common::*;
-use crate::game::skill::Skill;
+use crate::game::skill::{Skill, Catagory};
 use colorful::Color;
 use colorful::Colorful;
 use rand::prelude::*;
 
 impl Board {
+  pub fn choose_catagory(&self, id : Id) -> Catagory {
+    let unit = self.id2unit(id);
+    let mut txt = String::new();
+    let mut valid_i = Vec::new();
+    let skills = unit.skills();
+    for (i, c) in Catagory::all().iter().enumerate() {
+      match c {
+        Catagory::Melee => {
+          match unit.can_skill_or_reason(&Skill::Melee) {
+            Ok(_) => {
+              if Skill::Melee.find_target(self, id).len() > 0 {
+                valid_i.push(i);
+                txt += &format!("{i} : {}", Skill::Melee.to_string());
+              } else {
+                txt += &format!("{i} : {}", Skill::Melee.to_string()).color(Color::DarkGray).to_string();
+                txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
+              }
+            },
+            Err(msg) => {
+              txt += &format!("{i} : {}", Skill::Melee.to_string()).color(Color::DarkGray).to_string();
+              txt += &format!(" ({})", msg.color(Color::Red));
+            },
+          }
+        },
+        Catagory::Shoot => {
+          if skills.contains(&Skill::Shoot) {
+            match unit.can_skill_or_reason(&Skill::Shoot) {
+              Ok(_) => {
+                if Skill::Shoot.find_target(self, id).len() > 0 {
+                  valid_i.push(i);
+                  txt += &format!("{i} : {}", Skill::Shoot.to_string());
+                } else {
+                  txt += &format!("{i} : {}", Skill::Shoot.to_string()).color(Color::DarkGray).to_string();
+                  txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
+                }
+              },
+              Err(msg) => {
+                txt += &format!("{i} : {}", Skill::Shoot.to_string()).color(Color::DarkGray).to_string();
+                txt += &format!(" ({})", msg.color(Color::Red));
+              },
+            }
+          } else {
+            txt += &format!("{i} : {}", Skill::Shoot.to_string()).color(Color::DarkGray).to_string();
+            txt += &format!(" ({})", "无射击能力".color(Color::DarkGray));
+          }
+        },
+        Catagory::Special => {
+          valid_i.push(i);
+          txt += &format!("{i} : 特技");
+        },
+        Catagory::Rope => {
+          valid_i.push(i);
+          txt += &format!("{i} : 绳索");
+        },
+        Catagory::Dash => {
+          match unit.can_skill_or_reason(&Skill::Dash) {
+            Ok(_) => {
+              if Skill::Dash.find_target(self, id).len() > 0 {
+                valid_i.push(i);
+                txt += &format!("{i} : {}", Skill::Dash.to_string());
+              } else {
+                txt += &format!("{i} : {}", Skill::Dash.to_string()).color(Color::DarkGray).to_string();
+                txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
+              }
+            },
+            Err(msg) => {
+              txt += &format!("{i} : {}", Skill::Dash.to_string()).color(Color::DarkGray).to_string();
+              txt += &format!(" ({})", msg.color(Color::Red));
+            },
+          }
+        },
+        Catagory::Wait => {
+          valid_i.push(i);
+          txt += &format!("{i} : 等待");
+        },
+      }
+      txt += "\n";
+    }
+    println!("{txt}");
+    loop {
+      let mut ops = String::new();
+      io::stdin().read_line(&mut ops).expect("failed to read line");
+      if ops == "\n" {
+        ops = "0".to_string();
+      }
+      if let Ok(op) = ops.trim().parse::<usize>() {
+        if valid_i.contains(&op) {
+          println!("");
+          return Catagory::all().get(op).unwrap().clone()
+        } else {
+          println!("请输入可执行的序号");
+        }
+      }else {
+        println!("输入错误,请输入一个自然数");
+      }
+    }
+  }
+
+  pub fn choose_skill_with_catagory(&self, id : Id, catagory : Catagory) -> Option<Skill> {
+    match catagory {
+      Catagory::Melee => return Some(Skill::Melee),
+      Catagory::Shoot => return Some(Skill::Shoot),
+      Catagory::Dash => return Some(Skill::Dash),
+      Catagory::Wait => return Some(Skill::Wait),
+      _ => (),
+    }
+    let unit = self.id2unit(id);
+    let mut txt = String::new();
+    let mut valid_i = Vec::new();
+    let skills : Vec<&Skill> = unit.skills().iter().filter(|skl| skl.catagory() == catagory).collect();
+    let len = skills.len();
+    for (i, skill) in skills.iter().enumerate() {
+      match unit.can_skill_or_reason(skill) {
+        Ok(_) => {
+          if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
+            valid_i.push(i);
+            txt += &format!("{i} : {}", skill.to_string());
+          } else {
+            txt += &format!("{i} : {}", skill.to_string()).color(Color::DarkGray).to_string();
+            txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
+          }
+        },
+        Err(msg) => {
+          txt += &format!("{i} : {}", skill.to_string()).color(Color::DarkGray).to_string();
+          txt += &format!(" ({})", msg.color(Color::Red));
+        },
+      }
+      txt += "\n";
+    }
+    txt += &format!("{len} : 返回上一级");
+    println!("{}", txt);
+    loop {
+      let mut ops = String::new();
+      io::stdin().read_line(&mut ops).expect("failed to read line");
+      if ops == "\n" {
+        ops = "0".to_string();
+      }
+      if let Ok(op) = ops.trim().parse::<usize>() {
+        if op == len {
+          return None;
+        }
+        if valid_i.contains(&op) {
+          println!("");
+          return Some(skills.get(op).unwrap().clone().clone());
+        } else {
+          println!("请输入可执行的序号");
+        }
+      }else {
+        println!("输入错误,请输入一个自然数");
+      }
+    }
+  }
+  
   pub fn choose_skill(&self, id : Id) -> Skill {
     let unit = self.id2unit(id);
     let mut txt = String::new();
@@ -41,7 +194,7 @@ impl Board {
           println!("");
           return unit.skills().get(op).unwrap().clone()
         } else {
-          println!("请输入可执行的技能序号");
+          println!("请输入可执行的序号");
         }
       }else {
         println!("输入错误,请输入一个自然数");
@@ -104,7 +257,7 @@ impl Board {
           println!("");
           return None;
         } else {
-          println!("请输入可执行的技能序号");
+          println!("请输入可执行的序号");
         }
       }else {
         println!("输入错误,请输入一个自然数");

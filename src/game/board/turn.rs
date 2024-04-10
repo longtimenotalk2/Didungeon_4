@@ -1,6 +1,6 @@
 use super::super::board::Board;
 use crate::game::common::*;
-use crate::game::skill::Skill;
+use crate::game::skill::{Skill, Catagory};
 use rand::prelude::*;
 
 
@@ -53,27 +53,43 @@ impl Board {
 
   fn get_skill_complete(&self, id : Id) -> SkillComplete {
     loop {
-      let skill = self.choose_skill(id);
-      let targets = skill.find_target(self, id);
-      if targets.len() == 0 {
-        return SkillComplete {
-          id,
-          skill,
-          target : None,
-        }
-      } else {
-        if let Some(target) = self.choose_target(&id, &skill, &targets) {
-          return SkillComplete {
-            id,
-            skill,
-            target : Some(target),
+      let catagory = self.choose_catagory(id);
+      loop {
+        let skill = self.choose_skill_with_catagory(id, catagory);
+        if let Some(skill) = skill {
+          let targets = skill.find_target(self, id);
+          if targets.len() == 0 {
+            return SkillComplete {
+              id,
+              skill,
+              target : None,
+            }
+          } else {
+            if let Some(target) = self.choose_target(&id, &skill, &targets) {
+              return SkillComplete {
+                id,
+                skill,
+                target : Some(target),
+              }
+            } else {
+              match catagory {
+                Catagory::Melee => break,
+                Catagory::Shoot => break,
+                Catagory::Special => continue,
+                Catagory::Rope => continue,
+                Catagory::Dash => break,
+                Catagory::Wait => break,
+              }
+            }
           }
         } else {
-          continue;
+          break
         }
       }
     }
   }
+
+
 
   fn get_skill_complete_ai(&self, id : Id, rng : &mut ThreadRng)  -> SkillComplete {
     let skill = self.choose_skill_ai(id, rng);

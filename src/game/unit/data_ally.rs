@@ -15,7 +15,7 @@ impl Unit {
       100, // def_melee
       100, // atk_shoot
       100, // def_shoot
-      100, // agi
+      200, // agi
       100, // dex
       100, // luck
       3, // tie
