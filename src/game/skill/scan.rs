@@ -1,65 +1,126 @@
 use crate::game::common::*;
 use crate::game::board::Board;
 use crate::game::skill::Skill;
+use crate::game::unit::Unit;
+
+enum TargetTeamType {
+  Enemy,
+  Ally,
+}
+
+struct ReachDetail {
+  bypass : i32,
+  ttt : TargetTeamType,
+  demand : Box<dyn Fn(&Unit) -> bool>,
+}
 
 impl Skill {
   pub fn find_target(&self, board : &Board, id : Id) -> Vec<Target> {
     match self {
-      Skill::Melee => board.find_melee_option(id, 1).iter().map(|t| Target::Single(*t)).collect(),
-      Skill::Subdue => board.find_subdue_option(id).iter().map(|t| Target::Single(*t)).collect(),
-      Skill::Rescue => board.find_rescue_option(id).iter().map(|t| Target::Single(*t)).collect(),
+      Skill::Melee => {
+        let detail = ReachDetail {
+          bypass : 1,
+          ttt : TargetTeamType::Enemy,
+          demand : Box::new(|tar : &Unit| 
+            !tar.is_bound()
+          ),
+        };
+        board.find_reach_option(id, &detail)
+      },
+      Skill::Subdue => {
+        let detail = ReachDetail {
+          bypass : 0,
+          ttt : TargetTeamType::Enemy,
+          demand : Box::new(|tar : &Unit| 
+            !tar.is_bound() && tar.is_weak()
+          ),
+        };
+        board.find_reach_option(id, &detail)
+      },
+      Skill::Struggle => Vec::new(),
+      Skill::Rescue => {
+        let detail = ReachDetail {
+          bypass : 0,
+          ttt : TargetTeamType::Ally,
+          demand : Box::new(|tar : &Unit| 
+            tar.is_bound()
+          ),
+        };
+        board.find_reach_option(id, &detail)
+      },
       Skill::Dash => board.find_dash_option(id, 1),
-      _ => vec!(),
+      Skill::Wait => Vec::new(),
     }
   }
 }
 
 impl Board {
-  fn find_melee_option(&self, id : Id, bypass : i32) -> Vec<Id> {
-    let team = self.id2unit(id).team;
+  fn find_reach_option(&self, id : Id, detail : &ReachDetail) -> Vec<Target> {
+    let unit = self.id2unit(id);
+    let team = unit.team;
     let mut list = Vec::new();
     for (i, scan) in self.scan(id).iter().enumerate() {
       if let Some(scan) = scan {
         let pos = i as i32;
         let tar = self.pos2unit(pos);
-        let bypass = if scan.zoc {0} else {bypass};
-        if tar.team != team && !tar.is_bound() && bypass >= scan.block {
-          list.push(tar.id);
+        let bypass = if scan.zoc {0} else {detail.bypass};
+        let team_match = match detail.ttt {
+          TargetTeamType::Enemy => team != tar.team,
+          TargetTeamType::Ally => team == tar.team,
+        };
+        if team_match && bypass >= scan.block && (detail.demand)(&tar) {
+          list.push(Target::Single(tar.id));
         }
       }
     }
     list
   }
+  
+  // fn find_melee_option(&self, id : Id, bypass : i32) -> Vec<Id> {
+  //   let team = self.id2unit(id).team;
+  //   let mut list = Vec::new();
+  //   for (i, scan) in self.scan(id).iter().enumerate() {
+  //     if let Some(scan) = scan {
+  //       let pos = i as i32;
+  //       let tar = self.pos2unit(pos);
+  //       let bypass = if scan.zoc {0} else {bypass};
+  //       if tar.team != team && !tar.is_bound() && bypass >= scan.block {
+  //         list.push(tar.id);
+  //       }
+  //     }
+  //   }
+  //   list
+  // }
 
-  fn find_subdue_option(&self, id : Id) -> Vec<Id> {
-    let team = self.id2unit(id).team;
-    let mut list = Vec::new();
-    for (i, scan) in self.scan(id).iter().enumerate() {
-      if let Some(scan) = scan {
-        let pos = i as i32;
-        let tar = self.pos2unit(pos);
-        if tar.team != team && !tar.is_bound() && tar.is_weak() && scan.block <= 0 {
-          list.push(tar.id);
-        }
-      }
-    }
-    list
-  }
+  // fn find_subdue_option(&self, id : Id) -> Vec<Id> {
+  //   let team = self.id2unit(id).team;
+  //   let mut list = Vec::new();
+  //   for (i, scan) in self.scan(id).iter().enumerate() {
+  //     if let Some(scan) = scan {
+  //       let pos = i as i32;
+  //       let tar = self.pos2unit(pos);
+  //       if tar.team != team && !tar.is_bound() && tar.is_weak() && scan.block <= 0 {
+  //         list.push(tar.id);
+  //       }
+  //     }
+  //   }
+  //   list
+  // }
 
-  fn find_rescue_option(&self, id : Id) -> Vec<Id> {
-    let team = self.id2unit(id).team;
-    let mut list = Vec::new();
-    for (i, scan) in self.scan(id).iter().enumerate() {
-      if let Some(scan) = scan {
-        let pos = i as i32;
-        let tar = self.pos2unit(pos);
-        if tar.team == team && tar.is_bound() && scan.block <= 0 {
-          list.push(tar.id);
-        }
-      }
-    }
-    list
-  }
+  // fn find_rescue_option(&self, id : Id) -> Vec<Id> {
+  //   let team = self.id2unit(id).team;
+  //   let mut list = Vec::new();
+  //   for (i, scan) in self.scan(id).iter().enumerate() {
+  //     if let Some(scan) = scan {
+  //       let pos = i as i32;
+  //       let tar = self.pos2unit(pos);
+  //       if tar.team == team && tar.is_bound() && scan.block <= 0 {
+  //         list.push(tar.id);
+  //       }
+  //     }
+  //   }
+  //   list
+  // }
 
   fn find_dash_option(&self, id : Id, bypass : i32) -> Vec<Target> {
     let team = self.id2unit(id).team;

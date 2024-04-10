@@ -60,7 +60,7 @@ impl Board {
           if skill == &Skill::Melee {
             let be = self.melee_expect(*id, *idt);
             if be.is_back {
-              txt += &"被刺".color(Color::Red).bold().to_string();
+              txt += &"背刺".color(Color::Red).bold().to_string();
             }
             let hit = be.hit;
             let cri = be.cri;
