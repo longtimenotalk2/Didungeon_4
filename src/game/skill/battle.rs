@@ -36,9 +36,9 @@ impl Skill {
           base_cri : 10,
         }),
       Skill::RoundhouseKick => Some(MeleeCard {
-          atk_rate_fix : 1.5,
+          atk_rate_fix : 1.3,
           acc_rate_fix : 0.8,
-          base_cri : 35,
+          base_cri : 30,
         }),
       Skill::Whack => Some(MeleeCard {
           atk_rate_fix : 1.3,
@@ -243,7 +243,7 @@ impl Board {
       } else {
         "Miss".color(Color::BlueViolet).bold()
       };
-      println!("====> {}{} <==== ({} {}{})", back, typetxt, Skill::Shoot.to_string(), tar.colored_name(), tar.hp_bar());
+      println!("====> {}{} <==== ({} {}{})", back, typetxt, skill.to_string(), tar.colored_name(), tar.hp_bar());
       println!("");
     }
   }

@@ -127,10 +127,14 @@ impl Board {
           if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
             valid_i.push(i);
             txt += &format!("{i} : {}", skill.to_string());
-            txt += &format!(" ({})", msg);
+            if msg != "" {
+              txt += &format!(" ({})", msg);
+            }
           } else {
             txt += &format!("{i} : {}", skill.to_string()).color(Color::DarkGray).to_string();
-            txt += &format!(" ({})", msg);
+            if msg != "" {
+              txt += &format!(" ({})", msg);
+            }
             txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
           }
         },
