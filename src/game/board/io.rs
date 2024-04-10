@@ -331,6 +331,7 @@ impl Board {
             Skill::Shoot => tiers[2].push(skill),
             Skill::Melee => tiers[3].push(skill),
             Skill::Wait => tiers[4].push(skill),
+            Skill::Surrender => {},
             Skill::Dash => {},
             _ => tiers[1].push(skill),
           }

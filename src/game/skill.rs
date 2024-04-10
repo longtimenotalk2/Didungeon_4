@@ -38,6 +38,7 @@ pub enum Skill {
   Subdue,
   Struggle,
   Rescue,
+  Surrender,
   Dash,
   Wait,
 
@@ -55,7 +56,7 @@ pub enum Skill {
 
 impl Skill {
   pub fn basic() -> Vec<Self> {
-    vec![Self::Melee, Self::Subdue, Self::Struggle, Self::Rescue, Self::Dash, Self::Wait]
+    vec![Self::Melee, Self::Subdue, Self::Struggle, Self::Rescue, Self::Surrender, Self::Dash, Self::Wait]
   }
 
   pub fn to_string(&self) -> String {
@@ -65,6 +66,7 @@ impl Skill {
       Self::Subdue => "制服".to_string(),
       Self::Struggle => "挣扎".to_string(),
       Self::Rescue => "拯救".to_string(),
+      Self::Surrender => "投降".to_string(),
       Self::Dash => "移动".to_string(),
       Self::Wait => "等待".to_string(),
       Self::Xuliyiji => "蓄力一击".to_string(),
@@ -90,6 +92,7 @@ impl Skill {
       Self::Subdue => Catagory::Rope,
       Self::Struggle => Catagory::Other,
       Self::Rescue => Catagory::Rope,
+      Self::Surrender => Catagory::Rope,
       Self::Dash => Catagory::Dash,
       Self::Wait => Catagory::Wait,
       _ => Catagory::Special,

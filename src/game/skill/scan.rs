@@ -47,7 +47,7 @@ impl Skill {
           bypass : 0,
           ttt : TargetTeamType::Enemy,
           demand : Box::new(|tar : &Unit| 
-            !tar.is_bound() && tar.is_weak()
+            !tar.is_bound() && tar.can_be_subdue()
           ),
         };
         board.find_reach_option(id, &detail)
@@ -63,6 +63,7 @@ impl Skill {
         };
         board.find_reach_option(id, &detail)
       },
+      Skill::Surrender => board.find_surrender_option(id),
       Skill::Dash => board.find_dash_option(id, 1),
       Skill::Wait => Vec::new(),
       _ => panic!("技能 {} 未能正确寻找目标", self.to_string()),
@@ -139,6 +140,12 @@ impl Board {
         list.push(Target::Border(Dir::Right));
       }
     }
+    list
+  }
+
+  fn find_surrender_option(&self, id : Id) -> Vec<Target> {
+    let mut list = self.find_dash_option(id, 0);
+    list.push(Target::Single(id));
     list
   }
 }

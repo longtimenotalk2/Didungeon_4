@@ -4,8 +4,10 @@ mod show_unit;
 
 use crate::game::common::*;
 use super::skill::Skill;
+use super::buff::Buff;
 use colorful::Color;
 use colorful::Colorful;
+use std::collections::HashMap;
 
 pub struct Unit {
   // 基础
@@ -38,7 +40,7 @@ pub struct Unit {
   at : f64,
   bound : i32,
   dir : Dir,
-  
+  buffs : HashMap<Buff, i32>,
 }
 
 impl Unit {
@@ -87,6 +89,7 @@ impl Unit {
       at : 100.0,
       bound : 0,
       dir : Dir::None,
+      buffs : HashMap::new(),
     }
   }
 
@@ -160,6 +163,18 @@ impl Unit {
     if self.tp < 0 {self.tp = 0;}
   }
 
+  pub fn buffs(&self) -> &HashMap<Buff, i32> {
+    &self.buffs
+  }
+
+  pub fn with_buff(&self, buff : Buff) -> bool {
+    self.buffs.contains_key(&buff)
+  }
+
+  pub fn refresh_buff(&mut self, buff : Buff, stack : i32) {
+    self.buffs.entry(buff).and_modify(|s| *s = stack).or_insert(stack);
+  }
+
   // 复杂逻辑
   pub fn atk_melee(&self) -> f64 {
     let mut atk = self.atk_melee as f64;
@@ -205,8 +220,6 @@ impl Unit {
     self.luck as f64
   }
 
-  
-
   pub fn calc_t(&self) -> f64 {
     self.at / self.agi()
   }
@@ -228,6 +241,10 @@ impl Unit {
 
   pub fn is_weak(&self) -> bool {
     self.hp as f64 / self.hp_max as f64 <= 0.2
+  }
+
+  pub fn can_be_subdue(&self) -> bool {
+    self.is_weak() || self.with_buff(Buff::Surrender)
   }
 
   pub fn is_unhealth(&self) -> bool {
@@ -258,6 +275,15 @@ impl Unit {
 
   pub fn turn_start(&mut self) {
     self.dir = Dir::None;
+    let buffs_now = self.buffs.clone();
+    for buff in buffs_now.keys() {
+      self.buffs.entry(*buff).and_modify(|s| *s -= 1);
+      if let Some(v) = self.buffs.get(buff) {
+        if *v <= 0 {
+          self.buffs.remove(buff);
+        }
+      }
+    }
     if self.is_bound() {
       if self.is_weak() {
         self.hp += self.hp_max / 20;

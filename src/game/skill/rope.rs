@@ -1,5 +1,6 @@
 use crate::game::common::*;
 use crate::game::board::Board;
+use crate::game::buff::Buff;
 
 impl Board {
   pub fn subdue_exe(&mut self, id1 : Id, id2 : Id, show : bool) {
@@ -45,5 +46,10 @@ impl Board {
       println!("{} 解绑 {} {} 层，剩余 {} 层", unit.colored_name(), tar.colored_name(), rescue, tar.bound());
       println!("")
     }
+  }
+
+  pub fn surrender_exe(&mut self, id : Id, t : &Target) {
+    self.dash_exe(id, t);
+    self.id2unit_mut(id).refresh_buff(Buff::Surrender, 1);
   }
 }

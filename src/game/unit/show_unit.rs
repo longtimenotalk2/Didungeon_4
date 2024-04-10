@@ -1,5 +1,6 @@
 use super::super::unit::Unit;
 use crate::game::common::*;
+use crate::game::buff::Buff;
 use colorful::Color;
 use colorful::Colorful;
 
@@ -42,6 +43,13 @@ impl Unit {
     s += &format!("{:>3}/{:>3}", self.sp, self.sp_max).color(Color::Blue).to_string();
     s += ", ";
     s += &format!("{:>3}/{:>3}", self.tp, self.tp_max).color(Color::Green).to_string();
+
+    // buff
+    for buff in Buff::all() {
+      if let Some(st) = self.buffs.get(&buff) {
+        s += &format!(", {}{}", buff.to_string(), st);
+      }
+    }
 
     // 属性
     // fn cc(a : i32, b : i32) -> String {
