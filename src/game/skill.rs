@@ -3,7 +3,6 @@ mod movement;
 mod scan;
 mod rope;
 
-use crate::game::common::*;
 use super::unit::Unit;
 use colorful::Color;
 use colorful::Colorful;

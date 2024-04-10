@@ -290,7 +290,6 @@ fn hp_bar(hp : i32, hp_max : i32) -> String {
       6 => "▊",
       7 => "▉",
       8.. => "█",
-      _ => unreachable!(),
     }
   }
 

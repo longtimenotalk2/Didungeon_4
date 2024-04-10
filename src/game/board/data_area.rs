@@ -2,14 +2,14 @@ use super::super::board::Board;
 use super::super::unit::Unit;
 
 impl Board {
-  pub fn new_1v1A() -> Self {
+  pub fn new_1v1_a() -> Self {
     let mut b = Self::new();
     b.add_unit(Unit::new_yelin(0));
     b.add_unit(Unit::new_fighter(1));
     b
   }
   
-  pub fn new_4v4A() -> Self {
+  pub fn new_4v4_a() -> Self {
     let mut b = Self::new();
     // b.add_unit(Unit::new_noal(1));
     b.add_unit(Unit::new_elis(2));

@@ -1,6 +1,4 @@
 use super::super::board::Board;
-use crate::game::common::*;
-use super::super::unit::Unit;
 
 impl Board {
   pub fn show(&self) {

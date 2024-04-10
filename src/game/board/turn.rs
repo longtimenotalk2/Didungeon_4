@@ -5,7 +5,6 @@ use rand::prelude::*;
 
 
 struct SkillComplete {
-  id : Id, 
   skill : Skill,
   target : Option<Target>,
 }
@@ -58,7 +57,6 @@ impl Board {
     if unit.is_bound() {
       let skill = self.choose_skill_with_bound(id);
       return SkillComplete {
-        id,
         skill,
         target : None,
       }
@@ -71,14 +69,12 @@ impl Board {
           let targets = skill.find_target(self, id);
           if targets.len() == 0 {
             return SkillComplete {
-              id,
               skill,
               target : None,
             }
           } else {
             if let Some(target) = self.choose_target(&id, &skill, &targets) {
               return SkillComplete {
-                id,
                 skill,
                 target : Some(target),
               }
@@ -108,14 +104,12 @@ impl Board {
     let targets = skill.find_target(self, id);
     if targets.len() == 0 {
       SkillComplete {
-        id,
         skill,
         target : None,
       }
     } else {
       let target = targets.choose(rng).unwrap().clone();
       SkillComplete {
-        id,
         skill,
         target : Some(target),
       }

@@ -1,9 +1,9 @@
 pub mod game;
 
-use crate::game::skill::battle::*;
-use rand::prelude::*;
-use colorful::Color;
-use colorful::Colorful;
+// use crate::game::skill::battle::*;
+// use rand::prelude::*;
+// use colorful::Color;
+// use colorful::Colorful;
 
 
 fn main() {
@@ -18,8 +18,8 @@ fn main() {
     // noel.show();
 
     use game::board::Board;
-    // let mut b = Board::new_1v1A();
-    let mut b = Board::new_4v4A();
+    // let mut b = Board::new_1v1_a();
+    let mut b = Board::new_4v4_a();
     // let mut b = Board::new_test_a();
     // let mut b = Board::new_test_b();
     

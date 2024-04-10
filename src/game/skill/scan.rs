@@ -114,11 +114,9 @@ impl Board {
   }
 
   fn find_dash_option(&self, id : Id, bypass : i32) -> Vec<Target> {
-    let team = self.id2unit(id).team;
     let mut list = Vec::new();
     let scans = self.scan(id);
     if let Some(scan) = scans.get(0).unwrap() {
-      let tar = self.pos2unit(0);
       let bypass = if scan.zoc {0} else {bypass};
       if bypass >= scan.block_with_this {
         list.push(Target::Border(Dir::Left));
@@ -136,7 +134,6 @@ impl Board {
     }
     let last_index = scans.len() - 1;
     if let Some(scan) = scans.get(last_index).unwrap() {
-      let tar = self.pos2unit(last_index as i32);
       let bypass = if scan.zoc {0} else {bypass};
       if bypass >= scan.block_with_this {
         list.push(Target::Border(Dir::Right));
@@ -148,7 +145,7 @@ impl Board {
 
 #[derive(Debug)]
 struct Scan {
-  dir : Dir,
+  _dir : Dir,
   dist : i32,
   block : i32,
   zoc : bool,
@@ -176,7 +173,7 @@ impl Board {
       }
       scan_left.push(
         Some(Scan {
-          dir : Dir::Left,
+          _dir : Dir::Left,
           dist,
           block : block_old,
           zoc,
@@ -202,7 +199,7 @@ impl Board {
       }
       scan_right.push(
         Some(Scan {
-          dir : Dir::Left,
+          _dir : Dir::Left,
           dist,
           block : block_old,
           zoc,

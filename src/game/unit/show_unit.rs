@@ -44,15 +44,15 @@ impl Unit {
     s += &format!("{:>3}/{:>3}", self.tp, self.tp_max).color(Color::Green).to_string();
 
     // 属性
-    fn cc(a : i32, b : i32) -> String {
-      if a < b {
-        format!("{:>3}", a.to_string()).color(Color::Red).to_string()
-      }else if a > b {
-        format!("{:>3}", a.to_string()).color(Color::Green).to_string()
-      }else {
-        format!("{:>3}", a.to_string())
-      }
-    }
+    // fn cc(a : i32, b : i32) -> String {
+    //   if a < b {
+    //     format!("{:>3}", a.to_string()).color(Color::Red).to_string()
+    //   }else if a > b {
+    //     format!("{:>3}", a.to_string()).color(Color::Green).to_string()
+    //   }else {
+    //     format!("{:>3}", a.to_string())
+    //   }
+    // }
     // s += "  ";
     // s += &format!("攻{} ", cc(self.atk_melee() as i32, self.atk_melee));
     // s += &format!("防{} ", cc(self.def_melee() as i32, self.def_melee));

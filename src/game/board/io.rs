@@ -155,7 +155,7 @@ impl Board {
         }
         if valid_i.contains(&op) {
           println!("");
-          return Some(skills.get(op).unwrap().clone().clone());
+          return Some((*skills.get(op).unwrap()).clone());
         } else {
           println!("请输入可执行的序号");
         }

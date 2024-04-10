@@ -171,13 +171,13 @@ impl Board {
     let tar = self.id2unit(id2);
     let dir = self.dir_to(id1, id2);
     let is_back = dir == tar.dir();
-    let atk = unit.atk_shoot();
+    let atk = unit.atk_shoot() * card.atk_rate_fix;
     let mut def = tar.def_shoot();
     if is_back {
       def *= 0.5;
     }
     let dmg = dmg(atk, def);
-    let acc = unit.dex();
+    let acc = unit.dex() * card.acc_rate_fix;
     let mut evd = tar.agi() * 0.5 + tar.dex() * 0.25 + tar.luck() * 0.25;
     if is_back {
       evd *= 0.5;
@@ -185,7 +185,7 @@ impl Board {
     let hit = hit(acc, evd);
     let crieff = unit.dex() * 0.5 + unit.luck() * 0.5;
     let res = tar.luck();
-    let mut base_cri = 0;
+    let mut base_cri = card.base_cri;
     if is_back {
       base_cri += 40;
     }
