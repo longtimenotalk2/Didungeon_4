@@ -114,6 +114,7 @@ impl Board {
           match skill {
             Skill::Subdue => tiers[0].push(skill),
             Skill::Wait => tiers[2].push(skill),
+            Skill::Dash => {},
             _ => tiers[1].push(skill),
           }
         }
