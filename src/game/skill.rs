@@ -43,6 +43,13 @@ pub enum Skill {
   Rescue,
   Dash,
   Wait,
+
+  // YeLin
+  Xuliyiji,
+  Cangyanzhihun,
+
+  // Alyssa
+  RoundhouseKick,
 }
 
 impl Skill {
@@ -59,6 +66,9 @@ impl Skill {
       Self::Rescue => "拯救".to_string(),
       Self::Dash => "移动".to_string(),
       Self::Wait => "等待".to_string(),
+      Self::Xuliyiji => "蓄力一击".to_string(),
+      Self::Cangyanzhihun => "苍炎之魂".to_string(),
+      Self::RoundhouseKick => "回旋踢".to_string(),
     }
   }
 
@@ -86,6 +96,9 @@ impl Skill {
   pub fn cost(&self) -> (i32, i32) {
     match self {
       Skill::Shoot => (5, 0),
+      Skill::Xuliyiji => (10, 0),
+      Skill::Cangyanzhihun => (0, 25),
+      Skill::RoundhouseKick => (0, 30),
       _ => (0, 0)
     }
   }
@@ -120,26 +133,15 @@ impl Unit {
       }
       if ok {Ok(txt)} else {Err(txt)}
     };
+    let bound_then_cant = || -> Result<String, String> {
+      if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Melee.to_string()))} else {cost_judge(skill.cost())}
+    };
     match skill {
-      Skill::Melee => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Melee.to_string()))} else {cost_judge(skill.cost())}
-      },
-      Skill::Shoot => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Shoot.to_string()))} else {cost_judge(skill.cost())}
-      },
-      Skill::Subdue => {
-        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Subdue.to_string()))} else {cost_judge( skill.cost())}
-      },
       Skill::Struggle => {
         if self.is_bound() {cost_judge(skill.cost())} else {Err(format!("未被束缚，无法发动{}", Skill::Struggle.to_string()))}
       },
-      Skill::Rescue => {
-          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {cost_judge(skill.cost())}
-      },
-      Skill::Dash => {
-          if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Rescue.to_string()))} else {cost_judge(skill.cost())}
-      },
       Skill::Wait => Ok(emp),
+      _ => bound_then_cant(),
     }
   }
 

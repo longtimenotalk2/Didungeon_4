@@ -122,12 +122,14 @@ impl Board {
     let len = skills.len();
     for (i, skill) in skills.iter().enumerate() {
       match unit.can_skill_or_reason(skill) {
-        Ok(_) => {
+        Ok(msg) => {
           if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
             valid_i.push(i);
             txt += &format!("{i} : {}", skill.to_string());
+            txt += &format!(" ({})", msg);
           } else {
             txt += &format!("{i} : {}", skill.to_string()).color(Color::DarkGray).to_string();
+            txt += &format!(" ({})", msg);
             txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
           }
         },
@@ -212,8 +214,8 @@ impl Board {
         Target::Single(idt) => {
           let tar = self.id2unit(*idt);
           txt += &format!("{i} : {}{}", tar.colored_name(), tar.hp_bar());
-          if skill == &Skill::Melee {
-            let be = self.melee_expect(*id, *idt);
+          if skill.belong_to_melee(){
+            let be = self.melee_expect(*id, *idt, skill);
             if be.is_back {
               txt += &"背刺".color(Color::Red).bold().to_string();
             }

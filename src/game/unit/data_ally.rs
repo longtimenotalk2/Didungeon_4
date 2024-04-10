@@ -91,7 +91,7 @@ impl Unit {
       2, // tie
       1, // struggle
       2, // rescue
-      vec!(), // addition skills
+      vec!(Skill::Xuliyiji, Skill::Cangyanzhihun), // addition skills
     )
   }
 
@@ -113,7 +113,7 @@ impl Unit {
       3, // tie
       1, // struggle
       2, // rescue
-      vec!(), // addition skills
+      vec!(Skill::RoundhouseKick) // addition skills
     )
   }
 

@@ -27,27 +27,29 @@ impl Board {
       self.get_skill_complete(id)
     };
     sc.skill.cost_exe(self.id2unit_mut(id));
-    match sc.skill {
-      Skill::Melee => {
-        self.melee_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
-      },
-      Skill::Shoot => {
-        self.shoot_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
-      }
-      Skill::Subdue => {
-        self.subdue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
-      },
-      Skill::Struggle => {
-        self.struggle_exe(id, show);
-      },
-      Skill::Rescue => {
-        self.rescue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
-      },
-      Skill::Dash => {
-        self.dash_exe(id, &sc.target.unwrap());
-      }
-      Skill::Wait => {
-        self.wait_exe(id, show);
+    if sc.skill.belong_to_melee() {
+      self.melee_exe(id, sc.target.unwrap().to_id().unwrap(), &sc.skill, rng, show);
+    } else {
+      match sc.skill {
+        Skill::Shoot => {
+          self.shoot_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
+        }
+        Skill::Subdue => {
+          self.subdue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
+        },
+        Skill::Struggle => {
+          self.struggle_exe(id, show);
+        },
+        Skill::Rescue => {
+          self.rescue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
+        },
+        Skill::Dash => {
+          self.dash_exe(id, &sc.target.unwrap());
+        }
+        Skill::Wait => {
+          self.wait_exe(id, show);
+        }
+        _ => panic!("技能 {} 未被正确执行", sc.skill.to_string()),
       }
     }
   }

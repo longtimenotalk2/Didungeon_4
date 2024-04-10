@@ -22,17 +22,17 @@ struct RangeDetail {
 
 impl Skill {
   pub fn find_target(&self, board : &Board, id : Id) -> Vec<Target> {
+    if self.belong_to_melee() {
+      let detail = ReachDetail {
+        bypass : 1,
+        ttt : TargetTeamType::Enemy,
+        demand : Box::new(|tar : &Unit| 
+          !tar.is_bound()
+        ),
+      };
+      return board.find_reach_option(id, &detail)
+    }
     match self {
-      Skill::Melee => {
-        let detail = ReachDetail {
-          bypass : 1,
-          ttt : TargetTeamType::Enemy,
-          demand : Box::new(|tar : &Unit| 
-            !tar.is_bound()
-          ),
-        };
-        board.find_reach_option(id, &detail)
-      },
       Skill::Shoot => {
         let detail = RangeDetail {
           pierce : 2,
@@ -66,6 +66,7 @@ impl Skill {
       },
       Skill::Dash => board.find_dash_option(id, 1),
       Skill::Wait => Vec::new(),
+      _ => panic!("技能 {} 未能正确寻找目标", self.to_string()),
     }
   }
 }

@@ -5,8 +5,8 @@ use crate::game::common::*;
 impl Board {
   pub fn new_1v1A() -> Self {
     let mut b = Self::new();
-    b.add_unit(Unit::new_elis(2));
-    b.add_unit(Unit::new_fighter(5));
+    b.add_unit(Unit::new_yelin(0));
+    b.add_unit(Unit::new_fighter(1));
     b
   }
   

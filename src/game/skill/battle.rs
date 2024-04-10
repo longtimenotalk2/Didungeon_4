@@ -3,7 +3,45 @@ use crate::game::board::Board;
 use rand::prelude::*;
 use colorful::Color;
 use colorful::Colorful;
+use crate::game::skill::Skill;
 
+struct MeleeCard {
+  atk_rate_fix : f64,
+  acc_rate_fix : f64,
+  base_cri : i32,
+}
+
+impl Skill {
+  fn melee_card(&self) -> Option<MeleeCard> {
+    match self {
+      Skill::Melee => Some(MeleeCard {
+        atk_rate_fix : 1.,
+        acc_rate_fix : 1.,
+        base_cri : 0,
+      }),
+      Skill::Xuliyiji => Some(MeleeCard {
+        atk_rate_fix : 1.5,
+        acc_rate_fix : 0.7,
+        base_cri : 20,
+      }),
+      Skill::Cangyanzhihun => Some(MeleeCard {
+          atk_rate_fix : 1.0,
+          acc_rate_fix : 1.5,
+          base_cri : 10,
+        }),
+      Skill::RoundhouseKick => Some(MeleeCard {
+          atk_rate_fix : 1.5,
+          acc_rate_fix : 0.8,
+          base_cri : 35,
+        }),
+      _ => None,
+    }
+  }
+
+  pub fn belong_to_melee(&self) -> bool {
+    self.melee_card().is_some()
+  }
+}
 
 pub struct BattleExpect {
   pub hit : i32,
@@ -13,18 +51,19 @@ pub struct BattleExpect {
 }
 
 impl Board {
-  pub fn melee_expect(&self, id1 : Id, id2 : Id) -> BattleExpect {
+  pub fn melee_expect(&self, id1 : Id, id2 : Id, skill : &Skill) -> BattleExpect {
+    let card = skill.melee_card().expect(&format!("技能 {} 无法被识别为Melee", skill.to_string()));
     let unit = self.id2unit(id1);
     let tar = self.id2unit(id2);
     let dir = self.dir_to(id1, id2);
     let is_back = dir == tar.dir();
-    let atk = unit.atk_melee();
+    let atk = unit.atk_melee() * card.atk_rate_fix;
     let mut def = tar.def_melee();
     if is_back {
       def *= 0.5;
     }
     let dmg = dmg(atk, def);
-    let acc = unit.dex();
+    let acc = unit.dex() * card.acc_rate_fix;
     let mut evd = tar.agi() * 0.5 + tar.dex() * 0.25 + tar.luck() * 0.25;
     if is_back {
       evd *= 0.5;
@@ -32,7 +71,7 @@ impl Board {
     let hit = hit(acc, evd);
     let crieff = unit.dex() * 0.5 + unit.luck() * 0.5;
     let res = tar.luck();
-    let mut base_cri = 0;
+    let mut base_cri = card.base_cri;
     if is_back {
       base_cri += 40;
     }
@@ -46,8 +85,8 @@ impl Board {
     expect
   }
 
-  pub fn melee_exe(&mut self, id1 : Id, id2 : Id, rng : &mut ThreadRng , show : bool) {
-    let expect = self.melee_expect(id1, id2);
+  pub fn melee_exe(&mut self, id1 : Id, id2 : Id, skill : &Skill, rng : &mut ThreadRng , show : bool) {
+    let expect = self.melee_expect(id1, id2, skill);
     let hit = expect.hit;
     let mut dmg = expect.dmg;
     let is_hit = rng.gen_range(1..=100) <= hit;
@@ -63,7 +102,11 @@ impl Board {
       self.id2unit_mut(id2).take_dmg(dmg);
       self.id2unit_mut(id2).tp_add(10);
       self.id2unit_mut(id1).tp_add(10);
-      
+      if is_cri {
+        self.id2unit_mut(id1).tp_add(10);
+      }
+    } else {
+      self.id2unit_mut(id2).tp_add(5);
     }
     self.dash_to(id1, id2);
     if is_hit {
@@ -76,15 +119,16 @@ impl Board {
       let back = if expect.is_back {
         "背刺! ".color(Color::Red).bold().to_string()
       } else {"".to_string()};
-      if is_hit {
+      let typetxt = if is_hit {
         if is_cri {
-          println!("====> {}{} <==== (挥击 {})", back, format!("暴击! {dmg}!").color(Color::Orange1).bold(), tar.colored_name());
+          format!("暴击! {dmg}!").color(Color::Orange1).bold()
         } else {
-          println!("====> {}{} <==== (挥击 {})", back, format!("{dmg}!").color(Color::Red).bold(), tar.colored_name());
+          format!("{dmg}!").color(Color::Red).bold()
         }
       } else {
-        println!("====> {}{} <==== (挥击 {})", back,  "Miss".color(Color::BlueViolet).bold(),  tar.colored_name());
-      }
+        "Miss".color(Color::BlueViolet).bold()
+      };
+      println!("====> {}{} <==== ({} {}{})", back, typetxt, skill.to_string(), tar.colored_name(), tar.hp_bar());
       println!("");
     }
   }
@@ -139,6 +183,11 @@ impl Board {
       self.id2unit_mut(id2).take_dmg(dmg);
       self.id2unit_mut(id2).tp_add(10);
       self.id2unit_mut(id1).tp_add(10);
+      if is_cri {
+        self.id2unit_mut(id1).tp_add(10);
+      }
+    } else {
+      self.id2unit_mut(id2).tp_add(5);
     }
     let dir = self.dir_to(id1, id2);
     self.id2unit_mut(id1).set_dir(dir);
@@ -152,15 +201,16 @@ impl Board {
       let back = if expect.is_back {
         "背刺! ".color(Color::Red).bold().to_string()
       } else {"".to_string()};
-      if is_hit {
+      let typetxt = if is_hit {
         if is_cri {
-          println!("====> {}{} <==== (射击 {})", back, format!("暴击! {dmg}!").color(Color::Orange1).bold(), tar.colored_name());
+          format!("暴击! {dmg}!").color(Color::Orange1).bold()
         } else {
-          println!("====> {}{} <==== (射击 {})", back, format!("{dmg}!").color(Color::Red).bold(), tar.colored_name());
+          format!("{dmg}!").color(Color::Red).bold()
         }
       } else {
-        println!("====> {}{} <==== (射击 {})", back,  "Miss".color(Color::BlueViolet).bold(),  tar.colored_name());
-      }
+        "Miss".color(Color::BlueViolet).bold()
+      };
+      println!("====> {}{} <==== ({} {}{})", back, typetxt, Skill::Shoot.to_string(), tar.colored_name(), tar.hp_bar());
       println!("");
     }
   }
