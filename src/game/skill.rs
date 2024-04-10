@@ -99,6 +99,7 @@ impl Skill {
   pub fn cost(&self) -> (i32, i32) {
     match self {
       Skill::Shoot => (5, 0),
+      Skill::Rescue => (0, 10),
       Skill::Xuliyiji => (10, 0),
       Skill::Cangyanzhihun => (0, 25),
       Skill::RoundhouseKick => (0, 30),
