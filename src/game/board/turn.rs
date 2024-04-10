@@ -30,6 +30,9 @@ impl Board {
       Skill::Melee => {
         self.melee_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
       },
+      Skill::Shoot => {
+        self.shoot_exe(id, sc.target.unwrap().to_id().unwrap(), rng, show);
+      }
       Skill::Subdue => {
         self.subdue_exe(id, sc.target.unwrap().to_id().unwrap(), show)
       },

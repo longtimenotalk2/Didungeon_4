@@ -69,7 +69,6 @@ impl Board {
     }
     self.id2unit_mut(id1).at_delay(100.);
     if show {
-      let unit = self.id2unit(id1);
       let tar = self.id2unit(id2);
       let back = if expect.is_back {
         "背刺! ".color(Color::Red).bold().to_string()
@@ -86,7 +85,80 @@ impl Board {
       println!("");
     }
   }
-    
+
+  pub fn shoot_expect(&self, id1 : Id, id2 : Id) -> BattleExpect {
+    let unit = self.id2unit(id1);
+    let tar = self.id2unit(id2);
+    let dir = self.dir_to(id1, id2);
+    let is_back = dir == tar.dir();
+    let atk = unit.atk_shoot();
+    let mut def = tar.def_shoot();
+    if is_back {
+      def *= 0.5;
+    }
+    let dmg = dmg(atk, def);
+    let acc = unit.dex();
+    let mut evd = tar.agi() * 0.5 + tar.dex() * 0.25 + tar.luck() * 0.25;
+    if is_back {
+      evd *= 0.5;
+    }
+    let hit = hit(acc, evd);
+    let crieff = unit.dex() * 0.5 + unit.luck() * 0.5;
+    let res = tar.luck();
+    let mut base_cri = 0;
+    if is_back {
+      base_cri += 40;
+    }
+    let cri = effect_hit(crieff, res, base_cri);
+    let expect = BattleExpect {
+      hit,
+      dmg,
+      cri,
+      is_back,
+    };
+    expect
+  }
+
+  pub fn shoot_exe(&mut self, id1 : Id, id2 : Id, rng : &mut ThreadRng , show : bool) {
+    let expect = self.shoot_expect(id1, id2);
+    let hit = expect.hit;
+    let mut dmg = expect.dmg;
+    let is_hit = rng.gen_range(1..=100) <= hit;
+    let mut is_cri = false;
+    if is_hit {
+      is_cri = rng.gen_range(1..=100) <= expect.cri;
+      if is_cri {
+        dmg *= 3;
+      }else {
+        let y: f64 = rng.gen();
+        dmg = (dmg as f64 * (1.0 + y)) as i32;
+      }
+      self.id2unit_mut(id2).take_dmg(dmg);
+    }
+    let dir = self.dir_to(id1, id2);
+    self.id2unit_mut(id1).set_dir(dir);
+    if is_hit {
+      let dir = self.dir_to(id1, id2);
+      self.id2unit_mut(id2).set_dir(dir.anti())
+    }
+    self.id2unit_mut(id1).at_delay(100.);
+    if show {
+      let tar = self.id2unit(id2);
+      let back = if expect.is_back {
+        "背刺! ".color(Color::Red).bold().to_string()
+      } else {"".to_string()};
+      if is_hit {
+        if is_cri {
+          println!("====> {}{} <==== (射击 {})", back, format!("暴击! {dmg}!").color(Color::Orange1).bold(), tar.colored_name());
+        } else {
+          println!("====> {}{} <==== (射击 {})", back, format!("{dmg}!").color(Color::Red).bold(), tar.colored_name());
+        }
+      } else {
+        println!("====> {}{} <==== (射击 {})", back,  "Miss".color(Color::BlueViolet).bold(),  tar.colored_name());
+      }
+      println!("");
+    }
+  }
 }
 
 fn dmg(atk : f64, def : f64) -> i32 {

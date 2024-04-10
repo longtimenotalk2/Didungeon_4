@@ -67,6 +67,16 @@ impl Board {
             let dmg = be.dmg;
             txt += &format!("命{}%,伤{}~{},暴{}%", hit.to_string(), dmg, 2*dmg, cri);
           }
+          if skill == &Skill::Shoot {
+            let be = self.shoot_expect(*id, *idt);
+            if be.is_back {
+              txt += &"背刺".color(Color::Red).bold().to_string();
+            }
+            let hit = be.hit;
+            let cri = be.cri;
+            let dmg = be.dmg;
+            txt += &format!("命{}%,伤{}~{},暴{}%", hit.to_string(), dmg, 2*dmg, cri);
+          }
         },
         Target::Border(dir) => {
           match dir {

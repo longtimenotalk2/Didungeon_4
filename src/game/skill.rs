@@ -10,6 +10,7 @@ use super::unit::Unit;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Skill {
   Melee,
+  Shoot,
   Subdue,
   Struggle,
   Rescue,
@@ -25,6 +26,7 @@ impl Skill {
   pub fn to_string(&self) -> String {
     match self {
       Self::Melee => "挥击".to_string(),
+      Self::Shoot => "射击".to_string(),
       Self::Subdue => "制服".to_string(),
       Self::Struggle => "挣扎".to_string(),
       Self::Rescue => "拯救".to_string(),
@@ -47,6 +49,9 @@ impl Unit {
     match skill {
       Skill::Melee => {
         if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Melee.to_string()))} else {Ok(())}
+      },
+      Skill::Shoot => {
+        if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Shoot.to_string()))} else {Ok(())}
       },
       Skill::Subdue => {
         if self.is_bound() {Err(format!("束缚中，无法发动{}", Skill::Subdue.to_string()))} else {Ok(())}

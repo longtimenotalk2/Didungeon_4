@@ -22,6 +22,8 @@ pub struct Unit {
   pub tp_max : i32,
   pub atk_melee : i32,
   pub def_melee : i32,
+  pub atk_shoot : i32,
+  pub def_shoot : i32,
   pub agi : i32,
   pub dex : i32,
   pub luck : i32,
@@ -49,23 +51,30 @@ impl Unit {
     tp_max : i32,
     atk_melee : i32,
     def_melee : i32,
+    atk_shoot : i32,
+    def_shoot : i32,
     agi : i32,
     dex : i32,
     luck : i32,
     tie : i32,
     struggle : i32,
     rescue : i32,
+    mut addition_skills : Vec<Skill>,
   ) -> Self {
+    let mut skills = Skill::basic();
+    skills.append(&mut addition_skills);
     Self {
       id,
       name,
       team,
-      skills : Skill::basic(),
+      skills,
       hp_max,
       sp_max,
       tp_max,
       atk_melee,
       def_melee,
+      atk_shoot,
+      def_shoot,
       agi,
       dex,
       luck,
@@ -104,8 +113,6 @@ impl Unit {
 
   // 简单索引
   pub fn colored_name(&self) -> String {
-    use colorful::Color;
-    use colorful::Colorful;
     let mut cstr = self.name.clone().color(
       match self.team {
         Team::Ally => Color::Blue,
@@ -138,6 +145,18 @@ impl Unit {
 
   pub fn def_melee(&self) -> f64 {
     self.def_melee as f64
+  }
+
+  pub fn atk_shoot(&self) -> f64 {
+    let mut atk = self.atk_shoot as f64;
+    if self.is_weak() {
+      atk *= 0.8;
+    }
+    atk
+  }
+
+  pub fn def_shoot(&self) -> f64 {
+    self.def_shoot as f64
   }
   
   pub fn agi(&self) -> f64 {
