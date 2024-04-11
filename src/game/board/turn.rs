@@ -2,6 +2,8 @@ use super::super::board::Board;
 use crate::game::common::*;
 use crate::game::skill::{Catagory, Skill};
 use rand::prelude::*;
+use colorful::Color;
+use colorful::Colorful;
 
 struct SkillComplete {
   skill: Skill,
@@ -12,6 +14,7 @@ impl Board {
   pub fn main_turn(&mut self, id: Id, rng: &mut ThreadRng, show: bool) {
     self.id2unit_mut(id).turn_start();
     self.show();
+    println!("---------------------------------------");
     self.show_at_order();
     println!("");
     if show {
@@ -138,8 +141,14 @@ impl Board {
 
   fn show_at_order(&self) {
     let mut txt = String::new();
-    for id in self.at_order() {
+    for (i, id) in self.at_order().iter().enumerate() {
+      let id = *id;
       txt += &self.id2unit(id).colored_name();
+      if i == 0 {
+        txt += &format!("{:^3}", (10000. / self.id2unit(id).agi()) as i32).color(Color::Orange1).to_string();
+      } else {
+        txt += &format!("{:^3}", (self.id2unit(id).at() * 100. / self.id2unit(id).agi()) as i32);
+      }
       txt += "|";
     }
     txt = txt[..txt.len() - 1].to_string();

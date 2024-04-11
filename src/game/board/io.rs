@@ -180,6 +180,9 @@ impl Board {
           if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
             valid_i.push(i);
             txt += &format!("{i} : {}", skill.to_string());
+            if skill == &Skill::Struggle {
+              txt += &format!("(束{} -> {})", unit.bound(), 0.max(unit.bound() - unit.struggle));
+            }
           } else {
             txt += &format!("{i} : {}", skill.to_string()).color(Color::DarkGray).to_string();
             txt += &format!(" ({})", "无合法目标".color(Color::DarkGray));
@@ -260,6 +263,7 @@ impl Board {
     for (i, target) in targets.iter().enumerate() {
       match target {
         Target::Single(idt) => {
+          let unit = self.id2unit(*id);
           let tar = self.id2unit(*idt);
           txt += &format!("{i} : {}{}", tar.colored_name(), tar.hp_bar());
           if skill.belong_to_melee(){
@@ -281,6 +285,17 @@ impl Board {
             let cri = be.cri;
             let dmg = be.dmg;
             txt += &format!("命{}%,伤{}~{},暴{}%", hit.to_string(), dmg, 2*dmg, cri);
+          }
+          if skill == &Skill::Subdue {
+            txt += &format!("(束 -> {})", unit.tie);
+          }
+          if skill == &Skill::Rescue {
+            txt += &format!("(束{} -> {})", tar.bound(), 0.max(tar.bound() - unit.rescue));
+          }
+          if skill == &Skill::SecureBound {
+            let f = 5.min(tar.bound() + unit.tie);
+            let f = if f == 5 {"5".color(Color::Orange1).to_string()} else {f.to_string()};
+            txt += &format!("(束{} -> {})", tar.bound(), f);
           }
         },
         Target::Border(dir) => {

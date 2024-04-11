@@ -26,6 +26,10 @@ impl Board {
     let mut b = Self::new();
     b.add_unit(Unit::new_alyssa(1));
     b.add_unit(Unit::new_test_a(2));
+    let mut f = Unit::new_fighter(4);
+    f.take_dmg(500);
+    f.bound_add(4);
+    b.add_unit(f);
     b.add_unit(Unit::new_fighter(5));
     b
   }

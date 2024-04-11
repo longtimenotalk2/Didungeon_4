@@ -12,8 +12,8 @@ impl Unit {
   pub fn to_string(&self) -> String {
     let mut s = String::new();
     // at
-    s += &format!("[{:>3}]", self.at() as i32);
-
+    // s += &format!("[{:>3}]", (10000. / self.agi()) as i32);
+    
     // name
     s += &self.colored_name();
     s += match self.dir() {

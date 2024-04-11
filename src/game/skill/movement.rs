@@ -23,7 +23,7 @@ impl Board {
         let pos1 = self.id2pos(id1);
         match dir {
           Dir::Left => self.remove_insert(pos1, 0),
-          Dir::Right => self.remove_insert(pos1, self.len() as Pos),
+          Dir::Right => self.remove_insert(pos1, (self.len()-1) as Pos),
           _ => unreachable!(),
         }
       },
