@@ -63,6 +63,16 @@ impl Skill {
         };
         board.find_reach_option(id, &detail)
       },
+      Skill::SecureBound => {
+        let detail = ReachDetail {
+          bypass : 0,
+          ttt : TargetTeamType::Enemy,
+          demand : Box::new(|tar : &Unit| 
+            tar.is_bound() && !tar.is_bound_full()
+          ),
+        };
+        board.find_reach_option(id, &detail)
+      },
       Skill::Surrender => board.find_surrender_option(id),
       Skill::Dash => board.find_dash_option(id, 1),
       Skill::Wait => Vec::new(),

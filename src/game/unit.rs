@@ -137,12 +137,19 @@ impl Unit {
     self.bound > 0
   }
 
+  pub fn is_bound_full(&self) -> bool {
+    self.bound >= 5
+  }
+
   pub fn sp(&self) -> i32 {
     self.sp
   }
 
   pub fn sp_add(&mut self, mount : i32) {
     self.sp += mount;
+    if self.sp > self.sp_max {
+      self.sp = self.sp_max;
+    }
   }
 
   pub fn sp_sub(&mut self, mount : i32) {
@@ -156,6 +163,7 @@ impl Unit {
 
   pub fn tp_add(&mut self, mount : i32) {
     self.tp += mount;
+    if self.tp > self.tp_max {self.tp = self.tp_max;}
   }
 
   pub fn tp_sub(&mut self, mount : i32) {
@@ -204,6 +212,9 @@ impl Unit {
     let mut spd = self.agi as f64;
     if self.is_bound() {
       spd /= 1.5;
+      if self.is_bound_full() {
+        spd /= 2.0;
+      }
     }
     spd
   }
@@ -257,6 +268,9 @@ impl Unit {
 
   pub fn bound_add(&mut self, n : i32) {
     self.bound += n;
+    if self.bound > 5 {
+      self.bound = 5;
+    }
   } 
 
   pub fn bound_sub(&mut self, n : i32) -> bool {
@@ -285,9 +299,13 @@ impl Unit {
       }
     }
     if self.is_bound() {
-      if self.is_weak() {
-        self.hp += self.hp_max / 20;
-      } 
+      self.hp += self.hp_max / 20;
+      if self.hp > self.hp_max {
+        self.hp = self.hp_max;
+      }
+      // if self.is_weak() {
+      //   self.hp += self.hp_max / 20;
+      // } 
     }
   }
 

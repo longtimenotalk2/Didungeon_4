@@ -224,10 +224,10 @@ impl Board {
     }
     let dir = self.dir_to(id1, id2);
     self.id2unit_mut(id1).set_dir(dir);
-    if is_hit {
-      let dir = self.dir_to(id1, id2);
-      self.id2unit_mut(id2).set_dir(dir.anti())
-    }
+    // if is_hit {
+    //   let dir = self.dir_to(id1, id2);
+    //   self.id2unit_mut(id2).set_dir(dir.anti())
+    // }
     self.id2unit_mut(id1).at_delay(100.);
     if show {
       let tar = self.id2unit(id2);

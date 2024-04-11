@@ -39,4 +39,15 @@ impl Board {
     b.add_unit(Unit::new_fighter(7));
     b
   }
+
+  pub fn new_test_c() -> Self {
+    let mut arc = Unit::new_arc(3);
+    arc.bound_add(3);
+    let mut b = Self::new();
+    b.add_unit(Unit::new_alyssa(1));
+    b.add_unit(Unit::new_elis(2));
+    b.add_unit(arc);
+    b.add_unit(Unit::new_fighter(4));
+    b
+  }
 }

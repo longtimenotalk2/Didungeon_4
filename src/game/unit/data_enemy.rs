@@ -20,7 +20,7 @@ impl Unit {
       80, // luck
       2, // tie
       1, // struggle
-      1, // rescue
+      2, // rescue
       vec!(Skill::Whack), // addition skills
     )
   }
@@ -43,7 +43,7 @@ impl Unit {
       3, // tie
       1, // struggle
       2, // rescue
-      vec!(Skill::Shoot, Skill::PrecisionSniping), // addition skills
+      vec!(Skill::Shoot, Skill::PrecisionSniping, Skill::SecureBound), // addition skills
     )
   }
 }

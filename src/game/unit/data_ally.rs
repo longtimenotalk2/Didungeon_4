@@ -69,7 +69,7 @@ impl Unit {
       4, // tie
       2, // struggle
       3, // rescue
-      vec!(Skill::Shoot), // addition skills
+      vec!(Skill::Shoot, Skill::SecureBound), // addition skills
     )
   }
 
@@ -113,7 +113,7 @@ impl Unit {
       3, // tie
       1, // struggle
       2, // rescue
-      vec!(Skill::RoundhouseKick) // addition skills
+      vec!(Skill::RoundhouseKick, Skill::SecureBound) // addition skills
     )
   }
 
@@ -135,7 +135,7 @@ impl Unit {
       3, // tie
       1, // struggle
       2, // rescue
-      vec!(Skill::Shoot, Skill::PrecisionSniping), // addition skills
+      vec!(Skill::Shoot, Skill::PrecisionSniping, Skill::SecureBound), // addition skills
     )
   }
 

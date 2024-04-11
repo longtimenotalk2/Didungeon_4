@@ -25,7 +25,11 @@ impl Unit {
 
     // bound
     if self.is_bound() {
-      s += &format!("束{}", self.bound());
+      let mut tt = format!("束{}", self.bound());
+      if self.is_bound_full() {
+        tt = tt.color(Color::Orange1).to_string();
+      }
+      s += &tt
     } else {
       s += "   ";
     }
@@ -39,10 +43,12 @@ impl Unit {
     };
 
     // sp, at
-    s += ", ";
-    s += &format!("{:>3}/{:>3}", self.sp, self.sp_max).color(Color::Blue).to_string();
-    s += ", ";
-    s += &format!("{:>3}/{:>3}", self.tp, self.tp_max).color(Color::Green).to_string();
+    s += ",";
+    s += &format!("{:>3}", self.sp).color(Color::Blue).to_string();
+    // s += &format!("{:>3}/{:>3}", self.sp, self.sp_max).color(Color::Blue).to_string();
+    s += ",";
+    s += &format!("{:>3}", self.tp).color(Color::Green).to_string();
+    // s += &format!("{:>3}/{:>3}", self.tp, self.tp_max).color(Color::Green).to_string();
 
     // buff
     for buff in Buff::all() {
