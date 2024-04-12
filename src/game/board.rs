@@ -8,6 +8,7 @@ use crate::game::common::*;
 use rand::prelude::*;
 use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct Board {
   units: Vec<Unit>,
   t: f64,
@@ -51,6 +52,45 @@ impl Board {
       unit.name += " ";
     }
     self.units.push(unit);
+  }
+
+    pub fn play_continue(&mut self) {
+    let allys_id : Vec<Id> = self.units.iter().filter(|u| u.team == Team::Ally).map(|u| u.id).collect();
+    // let allys_hps : Vec<i32> = allys_id.map(|id| self.id2unit(id).hp())
+    let start_state = self.clone();
+    let mut stage = 1;
+    loop {
+      println!("\n<第 {stage} 关>");
+      match self.main_loop(100.) {
+        ResultBoard::Win => {
+          println!("我方胜利！");
+          stage += 1;
+          let now = self.clone();
+          *self = start_state.clone();
+          for (_i, id) in allys_id.iter().enumerate() {
+            let u = now.id2unit(*id);
+            let mhp = u.hp_max;
+            let hp = u.hp();
+            let nhp = hp + (mhp-hp) / 2;
+            let unit = self.id2unit_mut(*id);
+            unit.set_hp(nhp);
+            unit.tp_reset();
+          }
+        }
+        ResultBoard::Lose => { 
+          println!("我方失败！");
+          return;
+        },
+        ResultBoard::OutOfTime => {
+          println!("时间不足！");
+          return;
+        },
+        ResultBoard::Panic => {
+          println!("出错！");
+          return;
+        },
+      }
+    }
   }
 
   pub fn play(&mut self) {

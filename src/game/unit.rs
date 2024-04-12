@@ -9,6 +9,7 @@ use colorful::Color;
 use colorful::Colorful;
 use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct Unit {
   // 基础
   pub id : Id,
@@ -114,6 +115,14 @@ impl Unit {
     self.bound
   }
 
+  pub fn hp(&self) -> i32 {
+    self.hp
+  }
+
+  pub fn set_hp(&mut self, hp : i32) {
+    self.hp = hp;
+  }
+
   // 简单索引
   pub fn colored_name(&self) -> String {
     let mut cstr = self.name.clone().color(
@@ -169,6 +178,10 @@ impl Unit {
   pub fn tp_sub(&mut self, mount : i32) {
     self.tp -= mount;
     if self.tp < 0 {self.tp = 0;}
+  }
+
+  pub fn tp_reset(&mut self) {
+    self.tp = 10;
   }
 
   pub fn buffs(&self) -> &HashMap<Buff, i32> {

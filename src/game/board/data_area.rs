@@ -5,13 +5,16 @@ impl Board {
   pub fn new_1v1_a() -> Self {
     let mut b = Self::new();
     b.add_unit(Unit::new_yelin(0));
+    // let mut bd = Unit::new_fighter(1);
+    // bd.take_dmg(499);
+    // b.add_unit(bd);
     b.add_unit(Unit::new_fighter(1));
     b
   }
   
   pub fn new_4v4_a() -> Self {
     let mut b = Self::new();
-    // b.add_unit(Unit::new_noal(1));
+    b.add_unit(Unit::new_noal(1));
     b.add_unit(Unit::new_elis(2));
     b.add_unit(Unit::new_alyssa(3));
     b.add_unit(Unit::new_yelin(4));
