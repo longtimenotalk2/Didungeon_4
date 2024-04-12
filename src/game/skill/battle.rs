@@ -36,7 +36,7 @@ impl Skill {
           base_cri : 10,
         }),
       Skill::RoundhouseKick => Some(MeleeCard {
-          atk_rate_fix : 1.3,
+          atk_rate_fix : 1.5,
           acc_rate_fix : 0.8,
           base_cri : 30,
         }),

@@ -127,6 +127,15 @@ impl Board {
           if skill.is_no_target() || skill.find_target(self, id).len() > 0 {
             valid_i.push(i);
             txt += &format!("{i} : {}", skill.to_string());
+            if skill == &&Skill::Subdue {
+              txt += &format!(" {}", unit.tie);
+            }
+            if skill == &&Skill::Rescue {
+              txt += &format!(" {}", unit.rescue);
+            }
+            if skill == &&Skill::SecureBound {
+              txt += &format!(" {}", unit.tie);
+            }
             if msg != "" {
               txt += &format!(" ({})", msg);
             }
